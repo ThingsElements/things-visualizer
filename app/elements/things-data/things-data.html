@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+
+<dom-module id="things-data">
+  <template>
+
+    <things-ajax id="list-groups"
+                 resource-url="labels/{{groupsUrl}}"
+                 last-response="{{groups}}"
+                 auto>
+    </things-ajax>
+
+    <things-ajax id="get-group"
+                 resource-url="labels/{{groupUrl}}"
+                 last-response="{{labels}}"
+                 response-root="items"
+                 auto>
+    </things-ajax>
+
+    <things-ajax id="get-label"
+                 resource-url ="labels/{{selectedLabelUrl}}"
+                 last-response="{{selectedLabel}}"
+                 auto>
+    </things-ajax>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-data',
+
+        behaviors: [
+          Things.GlobalBehavior
+        ],
+
+        properties: {
+
+          groups: {
+            type: Array,
+            notify: true
+          },
+
+          groupsUrl: {
+            computed: 'computeGroupsUrl(globals.baseUrl)'
+          },
+
+          group: {
+            type: String,
+            notify: true
+          },
+
+          groupUrl: {
+            computed: 'computeGroupUrl(globals.baseUrl, group)'
+          },
+
+          labels: {
+            type: Array,
+            notify: true
+          },
+
+          selectedLabelId: {
+            type: String,
+            notify: true
+          },
+
+          selectedLabel: {
+            type: Object,
+            notify: true
+          },
+
+          selectedLabelUrl: {
+            computed: 'computeLabelUrl(globals.baseUrl, selectedLabelId)'
+          }
+        },
+
+        computeGroupsUrl: function(baseUrl) {
+          return 'groups/all.json';
+        },
+
+        computeGroupUrl: function(baseUrl, group) {
+          if(group) {
+            return ['list/', group, '.json'].join('')
+          }
+        },
+
+        computeLabelUrl: function(baseUrl, id) {
+          if(id)
+            return ['/', id, '.json'].join('')
+        },
+
+        ready: function() {
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

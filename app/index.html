@@ -1,0 +1,215 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Things Visualizer">
+  <title>Things Visualizer</title>
+
+  <!-- Place favicon.ico in the `app/` directory -->
+
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#2E3AA1">
+
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Things Visualizer">
+  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Things Visualizer">
+  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild-->
+
+  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <!-- endbuild -->
+
+  <!-- Because this project uses vulcanize this should be your only html import
+       in this file. All other imports should go in elements.html -->
+  <link rel="import" href="elements/elements.html">
+
+  <!-- For shared styles, shared-styles.html import in elements.html -->
+  <style is="custom-style" include="shared-styles">
+
+  @font-face {
+    font-family: "Bitstream Vera Serif Bold";
+    src: url("fonts/VeraSeBd.ttf");
+  }
+
+  @font-face {
+    font-family: "Disoluta font FFP";
+    src: url("fonts/Disoluta-font-FFP.ttf");
+  }
+
+  /*body { font-family: "Disoluta font FFP", "Bitstream Vera Serif Bold", serif }*/
+
+/*  body{
+  }
+*/
+  [main]{
+    @apply(--layout-vertical);
+  }
+  [main] iron-pages{
+    @apply(--layout-vertical);
+  }
+  iron-pages * {
+    @apply(--layout-flex);
+  }
+  things-profile {
+    height:0%;
+  }
+
+  </style>
+
+</head>
+
+<body unresolved class="fullbleed">
+  <span id="browser-sync-binding"></span>
+
+  <template is="dom-bind" id="app">
+    <things-setting id="setting">
+    </things-setting>
+    <things-i18n-src host="http://localhost:5000" src-url="locales"></things-i18n-src>
+    <!-- full dialog -->
+    <things-full-dialog id='common-full-dialog'></things-full-dialog>
+
+    <things-data
+      selected-label-id="[[labelId]]"
+      selected-label="{{label}}"
+      labels="{{labels}}"
+      groups="{{groups}}"
+      group="[[group]]">
+    </things-data>
+
+    <paper-drawer-panel id="drawer">
+
+      <things-sidebar drawer
+                      class="layout vertical"
+                      groups="{{groups}}"
+                      group="{{group}}"
+                      group-type="{{groupType}}">
+      </things-sidebar>
+
+      <div main>
+
+        <things-header>
+        </things-header>
+
+        <!-- Main Content -->
+        <iron-pages attr-for-selected="data-route"
+                    selected="{{route}}"
+                    class="content">
+
+          <things-list data-route="list"
+                       class="scroll-y"
+                       group="{{group}}"
+                       groups="[[groups]]"
+                       labels="[[labels]]"
+                       group-type="[[groupType]]">
+          </things-list>
+
+          <things-player data-route="player"
+                         route="[[route]]"
+                         group="[[group]]"
+                         labels="[[labels]]">
+          </things-player>
+
+          <things-info data-route="info" label="[[label]]" label-histories="[[labelHistories]]">
+          </things-info>
+
+          <things-modeler data-route="modeler"
+                          scene="{{scene}}"
+                          label="[[label]]">
+          </things-modeler>
+
+          <things-variable data-route="variable">
+          </things-variable>
+
+          <things-version data-route="version" scene="{{scene}}" label-id="{{labelId}}" label-histories="{{labelHistories}}" class="scroll-y">
+          </things-version>
+
+          <things-preview data-route="preview"
+                          scene="[[scene]]"
+                          route="{{route}}">
+          </things-preview>
+
+          <things-export data-route="export"
+                        scene="[[scene]]"
+                        route="{{route}}">
+          </things-export>
+
+          <things-print data-route="print">
+          </things-print>
+
+          <things-print-history data-route="print-history">
+          </things-print-history>
+
+          <things-login data-route="login"
+                        route ="{{route}}"
+                        title="Things Visualizer Management"
+                        login-path="login"
+                        content-type="application/x-www-form-urlencoded"
+                        success-route="list"
+                        username-input-label="ID"
+                        password-input-label="Password"
+                        submit-label ="Submit"
+                        reset-label = "Reset">
+            <img avatar src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"/>
+          </things-login>
+
+        </iron-pages>
+
+        <things-profile id="profile"></things-profile>
+
+        <things-spinner id="spinner" loading=false></things-spinner>
+
+      </div>
+
+    </paper-drawer-panel>
+
+    <paper-toast id="toast"
+                 duration="6000">
+    </paper-toast>
+
+    <!-- Uncomment next block to enable Service Worker support (1/2) -->
+    <paper-toast id="caching-complete"
+                 duration="6000"
+                 text="Caching complete! This app will work offline.">
+    </paper-toast>
+
+    <platinum-sw-register auto-register
+                          clients-claim
+                          skip-waiting
+                          base-uri="bower_components/platinum-sw/bootstrap"
+                          on-service-worker-installed="displayInstalledToast">
+      <platinum-sw-cache default-cache-strategy="fastest"
+                         cache-config-file="cache-config.json">
+      </platinum-sw-cache>
+    </platinum-sw-register>
+
+  </template>
+
+  <!-- build:js scripts/app.js -->
+  <script src="scripts/app.js"></script>
+  <!-- endbuild-->
+</body>
+
+</html>

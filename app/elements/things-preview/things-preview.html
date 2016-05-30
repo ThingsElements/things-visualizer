@@ -1,0 +1,206 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/things-scene-viewer/things-scene-viewer.html">
+<link rel="import" href="../../bower_components/things-scene-viewer/things-scene-layer.html">
+<link rel="import" href="../../bower_components/things-scene-viewer/things-scene-values.html">
+
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+
+<link rel="import" href="./things-websocket.html">
+<link rel="import" href="./things-model-behavior.html">
+
+<dom-module id="things-preview">
+  <template>
+    <style>
+      :host {
+        display: inline-flex;
+        @apply(--layout-horizontal);
+      }
+
+      things-scene-values{
+        width:200px;
+        padding:0 15px;
+        overflow-y:auto;
+      }
+      things-scene-viewer {
+        @apply(--layout-flex);
+      }
+
+      .label-preview{
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        @apply(--layout-flex);
+        background-color:#eceff1;border-left:1px solid #dfdfdf;
+      }
+      .label-preview .thumb{
+        width:480px;height:360px;min-width:300px;min-height:200px;margin:auto;
+        @apply(--layout-vertical);
+      }
+      .label-preview .setting{margin:auto;}
+      paper-dropdown-menu::shadow iron-dropdown{min-width:180px;}
+      paper-dropdown-menu paper-item{display:block !important;min-height:30px;font-size:13px;line-height:29px;}
+      paper-fab {
+        position: absolute;
+        bottom: 42px;
+        right: 16px;
+      }
+    </style>
+
+    <things-scene-values variables-model="[[variables]]" values="{{values}}">
+    </things-scene-values>
+
+    <div class="label-preview">
+
+      <div class="thumb paddingbox whitebox shadow">
+
+        <things-scene-viewer model="[[model]]"
+                             mode="2"
+                             variables="{{variables}}"
+                             values="[[values]]"
+                             screen-size="[[globals.screen]]"
+                             fit="both">
+          <things-scene-layer type="shift-layer"></things-scene-layer>
+        </things-scene-viewer>
+      </div>
+
+      <div class="setting">
+        <paper-dropdown-menu label="print list" name="cars" required>
+          <paper-menu class="dropdown-content">
+            <paper-item value="print 1">print 1 name</paper-item>
+            <paper-item value="print 2">print 2 name</paper-item>
+            <paper-item value="print 3">print 3 name</paper-item>
+            <paper-item value="print 4">print 4 name</paper-item>
+          </paper-menu>
+        </paper-dropdown-menu>
+      </div>
+
+    </div>
+
+    <things-print-agent agent-url="{{agentUrl}}" command="{{command}}">
+    </things-print-agent>
+
+    <paper-fab noink id="print" icon="icons:print" title="print"></paper-fab>
+
+    <!-- <things-websocket id="websocket" url="ws://localhost:9010/print/label"> -->
+    <things-websocket id="websocket" url="ws://192.168.35.227:9010/print/label">
+    </things-websocket>
+
+  </template>
+
+  <script src="../../bower_components/things-zpl/things-zpl.js"></script>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-preview',
+
+        properties: {
+          scene: {
+            notify: true
+          },
+          model: {
+            notify: true
+          },
+          route: {
+            notify:true,
+            observer: 'onRouteChanged'
+          }
+        },
+
+        behaviors: [
+          ThingsModelBehavior,
+          Things.GlobalBehavior
+        ],
+
+        listeners: {
+          // 'print.tap': 'onPrint'
+          'print.tap': 'onTapPrint'
+        },
+
+        ready: function() {
+
+        },
+
+        attached: function() {
+          this.$.websocket.fire('open')
+        },
+
+        detached: function() {
+          this.$.websocket.fire('close')
+        },
+
+        _getModelSuccess: function(event) {
+          var result = JSON.parse(event.detail.response);
+          // console.log(result.data)
+
+          if (result.code === 'NG') {
+            console.log('error')
+          }
+
+          var data = {
+            print_name : 'BIXOLON SLP-DX420',
+            command : result.data
+          }
+
+          this.$.websocket.fire('send', data);
+        },
+
+        onPrint: function(e) {
+          var queryString = this._queryString(this.variables);
+          this.getModel(queryString);
+        },
+
+        onTapPrint: function(e) {
+          // 클라이언트에서 직접 Agent로 zpl을 보내는 경우.
+          console.log(this.model.components)
+          var components = this.model.components;
+          this.command = zpl.revert(components)
+
+          var data = {
+            'print_name' : 'BIXOLON SLP-DX420',
+            'command' : this.command
+          }
+
+          this.$.websocket.fire('send', data);
+        },
+
+        _queryString: function(params) {
+          var queryParts = [];
+          for (var idx in params) {
+            var param = params[idx];
+
+            var value = param.value;
+            if (Array.isArray(value)) {
+              for (var i = 0; i < value.length; i++) {
+                queryParts.push(param.key + '=' + value[i]);
+              }
+            } else if (value !== null) {
+              queryParts.push(param.key + '=' + value);
+            } else {
+              queryParts.push(param.key);
+            }
+          }
+
+          // var identifier = window.location.href.split('/').pop();
+          var path = app.labelId + '?' + 'format=zpl' + '&version=' + app.label.version || 1
+
+          if (queryParts.length > 0) {
+             + '&' + queryParts.join('&');
+          }
+
+          return path;
+        },
+
+        onRouteChanged: function(route) {
+
+          /* route가 변경되었을 때만, 작동한다. 편법이지만. */
+          if(this.scene && route === this.getAttribute('data-route'))
+            this.model = this.scene.model
+        }
+      });
+    })();
+  </script>
+</dom-module>

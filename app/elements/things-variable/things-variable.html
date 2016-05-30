@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-variable">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <div>{{brand}}</div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-variable',
+
+        properties: {
+          brand: {
+            type: String,
+            value: 'things-variable',
+            notify: true
+          }
+        },
+
+        ready: function() {
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

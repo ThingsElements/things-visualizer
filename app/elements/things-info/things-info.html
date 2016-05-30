@@ -1,0 +1,150 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="./things-timeline.html">
+
+<dom-module id="things-info">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+        --iron-icon-width: 15px;
+        --iron-icon-height:15px;
+      }
+      things-timeline {
+        @apply(--layout-flex);
+      }
+      .label-header{
+        padding:7px 10px;
+        -webkit-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+        -moz-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+        box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+      }
+      .label-header h1{margin:0;}
+      .label-header h1 span{
+        margin-left:10px;
+        color:var(--paper-green-500);
+        font-size:15px;
+        font-weight:normal;
+      }
+      .label-header .detail-info{float:left;}
+      .label-header .detail-info span{
+        display:inline-block;
+        margin-right:12px;
+        font-size:12px;
+      }
+      .label-header .btns{
+        float:right;
+        border:1px solid #e0e0e0;
+        border-radius:5px;
+        overflow:hidden;
+        background-color:#efefef;
+      }
+      .label-header .btns paper-button{
+        padding:3px 7px !important;
+        font-size:13px;
+      }
+      .label-header .btns iron-icon{margin-top:-4px;}
+    </style>
+
+    <div class="label-header">
+      <h1>[[label.name]]<span>[[label.description]]</span></h1>
+      <div class="detail-info">
+        <span class="group"><iron-icon icon="image:center-focus-weak"></iron-icon>[[label.labelGroupId]]</span>
+        <span class="releases"><iron-icon icon="image:style"></iron-icon> [[_count(events)]] releases</span>
+        <span class="group"><iron-icon icon="image:straighten"></iron-icon> size : [[label.width]] x [[label.height]]</span>
+        <span class="url">
+          <iron-icon icon="icons:link"></iron-icon> API URL
+          <input type="text">
+        </span>
+      </div>
+      <div class="btns">
+        <paper-button on-tap="onTapPreview"><iron-icon icon="image:remove-red-eye"></iron-icon> preview</paper-button>
+        <paper-button on-tap="onTapHistory"><iron-icon icon="icons:query-builder"></iron-icon> history</paper-button>
+        <paper-button on-tap="onTapModeler"><iron-icon icon="editor:border-color"></iron-icon> modeler</paper-button>
+      </div>
+    </div>
+
+    <things-timeline label-id="{{labelId}}" label="[[label]]" events="[[events]]">
+    </things-timeline>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-info',
+
+        properties: {
+          label: {
+            type: Object,
+            notify: true,
+            observer: 'onLabelChanged'
+          },
+
+          labelId: {
+            notify: true
+          },
+
+          events: {
+            type: Array
+          },
+
+          labelHistories: {
+            type: Array,
+            observer: 'labelHistoriesChanged'
+          }
+        },
+
+        labelHistoriesChanged: function(labelHistories) {
+          if(labelHistories && labelHistories.length > 0) {
+
+            this.events = labelHistories.sort(function(a, b) {
+              return (a.version > b.version) ? -1 : ((b.version > a.version) ? 1 : 0);
+            });
+          }
+        },
+
+        ready: function() {
+        },
+
+        onLabelChanged: function() {
+          // console.log('onLabelChanged')
+        },
+
+
+        onTapModeler: function(e) {
+          page(`/modeler/${this.label.id}`);
+        },
+
+        onTapPrint: function(e) {
+          page(`/print/${this.label.id}`);
+        },
+
+        onTapPreview: function(e) {
+          page(`/preview/${this.label.id}`);
+        },
+
+        onTapHistory: function(e) {
+          page(`/print-history/${this.label.id}`);
+        },
+
+        onTapCopy: function(e) {
+          // page(`/modeler/${this.label.id}`);
+        },
+
+        onTapDelete: function(e) {
+          // page(`/modeler/${this.label.id}`);
+        },
+
+        _count: function(events) {
+          return events.length
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

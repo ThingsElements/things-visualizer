@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+
+<dom-module id="things-profile">
+  <template>
+
+    <style>
+    </style>
+
+    <paper-card heading="Profile">
+      <div class="rate-image">
+        <img src="[[img]]">
+      </div>
+      <div class="card-content">
+        <div class="rate-header">Name : [[globals.user.name]]</div>
+        <div class="rate-name">E-Mail : [[globals.user.email]]</div>
+      </div>
+      <div class="card-actions">
+        <paper-button raised>Change Password</paper-button>
+        <paper-button raised>Logout</paper-button>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-profile',
+
+        properties : {
+          img : {
+            type: String,
+            value: '../../images/profile.png'
+          }
+        },
+
+        behaviors: [
+          Things.GlobalBehavior,
+          Polymer.PaperDialogBehavior
+        ]
+      });
+
+    })();
+  </script>
+
+</dom-module>

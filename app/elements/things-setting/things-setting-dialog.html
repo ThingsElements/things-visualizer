@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+
+<dom-module id="things-setting-dialog">
+  <template>
+
+    <style include="paper-dialog-shared-styles">
+    </style>
+
+    <h2>Setting</h2>
+
+    <paper-input-container>
+      <label>Base URL</label>
+      <input is="iron-input" bind-value="{{globals.baseUrl::change}}" autofocus></input>
+    </paper-input-container>
+
+    <paper-dropdown-menu label="Screen Size" value="{{globals.screen}}">
+      <paper-menu class="dropdown-content" selected="{{selectedScreen(globals.screen)}}">
+        <template is="dom-repeat" items="{{screens}}">
+          <paper-item>{{item}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+    <paper-dropdown-menu label="language"
+                         value="{{globals.locale}}">
+      <paper-menu id="language"
+                  class="dropdown-content"
+                  selected="{{selectedLanguage(globals.locale)}}">
+        <template is="dom-repeat" items="{{languages}}">
+          <paper-item label="[[item.code]]" code="[[item.code]]">[[item.name]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-setting-dialog',
+
+        properties: {
+        },
+
+        listeners: {
+          'language.iron-select': '_onSelectLanguage'
+        },
+
+        behaviors: [
+          Polymer.PaperDialogBehavior, Things.GlobalBehavior
+        ],
+
+        ready: function() {
+          this.screens = [7, 11.6, 13.3, 14, 15.6, 17.3, 21, 23, 24, 27, 29, 30, 31, 31.5, 32]
+            .map(function(v) {return "" + v})
+          this.languages = [{
+            name: 'English',
+            code: 'en'
+          }, {
+            name: '한국어',
+            code: 'ko'
+          }, {
+            name: '中文',
+            code: 'zh'
+          }]
+        },
+
+        selectedScreen: function(screen) {
+          if(!screen)
+            return
+
+          for(var i = 0;i < this.screens.length;i++) {
+            if(this.screens[i] == screen)
+              return i
+          }
+        },
+
+        selectedLanguage: function(language) {
+          if(!language)
+            return
+          this.languages = [{
+            name: 'English',
+            code: 'en'
+          }, {
+            name: '한국어',
+            code: 'ko'
+          }, {
+            name: '中文',
+            code: 'zh'
+          }]
+
+          for(var i = 0;i < this.languages.length;i++) {
+            if(this.languages[i].code == language)
+              return i
+          }
+        },
+
+        _onSelectLanguage(e) {
+          // I18nMsg.lang = e.detail.item.code
+          // Platform.performMicrotaskCheckpoint()
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

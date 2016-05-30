@@ -1,0 +1,92 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="things-player-setting">
+  <template>
+
+    <style include="paper-dialog-shared-styles">
+    </style>
+
+    <h2>Setting</h2>
+
+    <paper-dropdown-menu label="Transition Type" value="{{transition}}">
+      <paper-menu class="dropdown-content" selected="{{selectedTransition(transition)}}">
+        <template is="dom-repeat" items="{{transitions}}">
+          <paper-item>{{item}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+    <paper-dropdown-menu label="Playtime for a Scene" value="{{playtime}}">
+      <paper-menu class="dropdown-content" selected="{{selectedPlaytime(playtime)}}">
+        <template is="dom-repeat" items="{{playtimes}}">
+          <paper-item>{{item}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+    <div class="buttons">
+      <paper-button dialog-confirm autofocus>OK</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-player-setting',
+
+        properties: {
+          transitions: {
+            type: Array,
+            notify: true,
+            value: ['carousel', 'flip-card', 'flip-card2', 'cube']
+          },
+          transition: {
+            type: String,
+            notify: true
+          },
+          playtimes: {
+            type: Array,
+            notify: true,
+            value: [5, 10, 15, 20, 30]
+          },
+          playtime: {
+            type: Number,
+            notify: true
+          }
+        },
+
+        listeners: {
+        },
+
+        behaviors: [
+          Polymer.PaperDialogBehavior
+        ],
+
+        created: function() {
+        },
+
+        selectedTransition: function(transition) {
+          for(var i = 0;i < this.transitions.length;i++) {
+            if(this.transitions[i] == transition)
+              return i
+          }
+        },
+
+        selectedPlaytime: function(playtime) {
+          for(var i = 0;i < this.playtimes.length;i++) {
+            if(this.playtimes[i] == playtime)
+              return i
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

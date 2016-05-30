@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="./things-timeline-event.html">
+<link rel="import" href="./things-timeline-event-info.html">
+
+<dom-module id="things-timeline">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --paper-item-min-height:35px;
+        @apply(--layout-horizontal);
+      }
+
+      #timeline {
+        @apply(--layout-flex-2);
+      }
+
+      things-timeline-event-info {
+        @apply(--layout-flex-3);
+      }
+      paper-item{
+        border-bottom:1px solid #ccc;
+      }
+      paper-item.iron-selected{background-color:rgba(84,110,122,.12)}
+      paper-listbox{background-color:transparent;}
+    </style>
+
+    <paper-listbox id="timeline"
+                   selected="{{seq}}">
+      <template is="dom-repeat" items="[[events]]">
+        <paper-item>
+          <things-timeline-event event="[[item]]">
+          </things-timeline-event>
+        </paper-item>
+      </template>
+    </paper-listbox>
+
+    <things-timeline-event-info event="[[event]]"
+                                label="[[label]]">
+    </things-timeline-event-info>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-timeline',
+
+        properties: {
+          label: {
+            notify: true
+          },
+
+          labelId: {
+            notify: true
+          },
+
+          events: {
+            type: Array,
+            value: [],
+            observer: 'onEventsChange'
+          }
+        },
+
+        observers: [
+          'onChangeEvent(seq)'
+        ],
+
+        onChangeEvent: function(after) {
+
+          this.event = this.events[after]
+          this.labelId = this.event.id;
+        },
+
+        onEventsChange: function(events) {
+
+          if(events && events.length > 0) {
+            this.seq = 0;
+            this.event = events[this.seq]
+          } else {
+            this.event = null
+          }
+        },
+
+        ready: function() {
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

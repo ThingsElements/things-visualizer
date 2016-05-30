@@ -1,0 +1,98 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/things-ajax/things-ajax.html">
+
+<dom-module id="things-group-new">
+  <template>
+    <paper-dialog id="new-group">
+      <h2>New Group</h2>
+
+      <paper-input
+            name="name"
+            type="text"
+            label="Group Name"
+            value="{{name::input}}"
+            required
+            auto-validate
+            autofocus>
+      </paper-input>
+
+      <paper-dropdown-menu label="Group Type" name="category" value="{{category}}">
+        <paper-menu class="dropdown-content">
+          <paper-item>LABEL</paper-item>
+          <paper-item>PLAY</paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>Create</paper-button>
+      </div>
+
+      <things-ajax id="create"
+                   method="POST"
+                   content-type="application/json"
+                   resource-url="labels/groups"
+                   body="{{newObject}}">
+      </things-ajax>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-group-new',
+
+        properties: {
+          name: {
+            type: String,
+            notify: true
+          },
+          category: {
+            type: String,
+            notify: true
+          },
+          newObject: {
+            type: Object,
+            value: {},
+            notify: true,
+            computed: 'computeNewObject(name,category)'
+          }
+        },
+
+        listeners: {
+          'create.things-ajax-response' : 'afterSave',
+          'new-group.iron-overlay-closed' : 'onDialogClosed'
+        },
+
+        computeNewObject(name, category) {
+          return { name: name, category : category };
+        },
+
+        show: function() {
+          var dialog = this.$["new-group"].open();
+        },
+
+        onDialogClosed: function(e) {
+          if(e.detail.confirmed) {
+            if(this.newObject && this.newObject.name) {
+              this.$.create.generateRequest();
+            }
+          }
+        },
+
+        afterSave: function(e) {
+          this.fire('saveCompleted', this.newObject);
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

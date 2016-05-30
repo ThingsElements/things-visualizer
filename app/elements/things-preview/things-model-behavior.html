@@ -1,0 +1,80 @@
+<script>
+
+'use strict'
+
+var labelId;
+var labelModel;
+
+var ThingsModelBehavior = {
+	properties: {
+		printService: {
+			type: Object,
+      value: {}
+		},
+		url: {
+      type: String,
+      notify: true,
+      value: 'http://www.printhing.xyz:6789/print/'
+    },
+	},
+
+	ready: function() {
+    // console.log('print behavior ready')
+		this.printService = document.createElement('iron-ajax');
+    this.printService.id = 'printService';
+    this.listen(this.printService, 'response', '_getModelSuccess');
+    this.listen(this.printService, 'error', '_getModelFailure');
+	},
+
+	_getModelSuccess: function(event) {
+    // console.log(event.detail.response)
+    // var response = event.detail.response;
+  },
+
+  _getModelFailure: function(event) {
+    if(event && event.detail &&
+     event.detail.request &&
+     event.detail.request.xhr &&
+     event.detail.request.xhr.response) {
+      var response = event.detail.request.xhr.response;
+      if(response.status == 401) {
+        this.handleUnauthorized();
+      } else {
+        this.showToast('Error : ' + response.error + ', Status : ' + response.status + ', Message : ' + response.message);
+      }
+
+      // this.fire('error', event.detail.request.xhr.response);
+    } else {
+      var message = 'Something wrong! Please ask to administrator';
+      if (this.showToast) {
+        this.showToast(message);
+      } else {
+        console.log(message);
+      }
+
+      this.fire('error', event);
+    }
+  },
+
+  showToast: function(msg) {
+    app.$.toast.text = msg;
+    app.$.toast.open();
+  },
+
+  _entytyUrl: function(params) {
+    return this.url + params;
+  },
+
+  getModel: function(params) {
+    // Print 서비스 호출.
+    this.printService.url = this._entytyUrl(params);  // TODO
+    this.printService.method = 'GET';
+    this.printService.handleAs='text'
+
+    this.printService.withCredentials = false;
+    this.printService.generateRequest();
+    return;
+  }
+}
+
+</script>

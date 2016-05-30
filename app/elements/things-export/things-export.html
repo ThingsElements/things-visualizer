@@ -1,0 +1,62 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-export">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+      things-editor-script {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
+    </style>
+
+    <things-editor-script id="eval-editor"
+                          theme="ace/theme/monokai"
+                          mode="ace/mode/text"
+                          value="{{zpl}}">
+    </things-editor-script>
+
+  </template>
+
+  <script src="../../bower_components/things-zpl/things-zpl.js"></script>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-export',
+
+        properties: {
+          scene: {
+            notify: true
+          },
+          zpl: {
+            type: String,
+            notify: true
+          },
+          route: {
+            notify:true,
+            observer: 'onRouteChanged'
+          }
+        },
+
+        ready: function() {
+        },
+
+        onRouteChanged: function(after) {
+
+          if(this.scene && after === this.getAttribute('data-route')) {
+            var model = this.scene.model()
+            this.zpl = zpl.revert(model.components)
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,331 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/things-monitor/things-player-carousel.html">
+<link rel="import" href="../../bower_components/things-monitor/things-player-flipcard.html">
+<link rel="import" href="../../bower_components/things-monitor/things-player-flipcard-edge.html">
+<link rel="import" href="../../bower_components/things-monitor/things-player-cube.html">
+
+<dom-module id="things-player">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width:100%; /* 전체화면보기를 위해서 필요함. */
+      @apply(--layout-vertical);
+    }
+    things-player-flipcard {
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+    }
+    things-player-flipcard-edge {
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+    }
+    things-player-cube {
+      /*@apply(--layout-vertical);*/
+      /*@apply(--layout-flex);*/
+    }
+    things-player-carousel {
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+    }
+    things-scene-player[front]{
+      /*background:navy;*/
+      background:black;
+    }
+    things-scene-player[back]{
+      /*background:green;*/
+      background:black;
+    }
+    /*paper-fab {
+      position: absolute;
+      bottom: 15px;
+      right: 16px;
+    }*/
+    paper-fab-speed-dial {
+      background-color:transparent;
+      z-index:10000;
+      position:absolute;
+      right:15px;
+      bottom:15px;
+    }
+    .fab-text{
+      position:absolute;
+      margin-top:-35px;margin-left:-55px;
+      padding:2px 3px;
+      width:45px;
+      background-color:rgba(0,0,0,.5);
+      -moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;
+      color:#fff;
+      font-size:11px;
+      text-align:center;
+      -webkit-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+      -moz-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+      box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+    }
+    .fab-text:after{
+      content:"";
+      position: absolute;
+      left: 100%;
+      top: 5px;
+      width: 0;
+      height: 0;
+      border-top: 3px solid transparent;border-left: 4px solid rgba(0,0,0,.5);border-bottom: 3px solid transparent;
+    }
+    </style>
+
+    <things-player-setting modal
+                           id="setting"
+                           transition="{{transition}}"
+                           playtime="{{playtime}}">
+    </things-player-setting>
+
+    <things-subscriber id="subscriber"
+                       message="{{message}}">
+    </things-subscriber>
+
+    <template is="dom-if" if="[[isSame(transition, 'flip-card')]]" restamp>
+      <things-player-flipcard axis="y" tabindex="0" focus>
+        <things-scene-player front
+                             label="{{labelsCopy.0}}"
+                             message="[[message]]">
+        </things-scene-player>
+        <things-scene-player back
+                             label="{{labelsCopy.1}}"
+                             message="[[message]]">
+        </things-scene-player>
+      </things-player-flipcard>
+    </template>
+
+    <template is="dom-if" if="[[isSame(transition, 'flip-card2')]]" restamp>
+      <things-player-flipcard-edge axis="y" tabindex="0" focus>
+        <things-scene-player front
+                             label="{{labelsCopy.0}}"
+                             message="[[message]]">
+        </things-scene-player>
+        <things-scene-player back
+                             label="{{labelsCopy.1}}"
+                             message="[[message]]">
+        </things-scene-player>
+      </things-player-flipcard-edge>
+    </template>
+
+    <template is="dom-if" if="[[isSame(transition, 'carousel')]]" restamp>
+      <things-player-carousel axis="y" backface-visibility=false tabindex="0" focus>
+        <template is='dom-repeat' items="{{labelsCopy}}">
+          <things-scene-player page
+                               label="{{item}}"
+                               message="[[message]]">
+          </things-scene-player>
+        </template>
+      </things-player-carousel>
+    </template>
+
+    <template is="dom-if" if="[[isSame(transition, 'cube')]]" restamp>
+      <things-player-cube backface-visibility=false tabindex="0" focus>
+        <template is='dom-repeat' items="{{labelsCopy}}"
+                  filter="filterCube">
+          <things-scene-player page
+                               label="{{item}}"
+                               message="[[message]]">
+          </things-scene-player>
+        </template>
+      </things-player-cube>
+    </template>
+
+    <paper-fab-speed-dial id="fab" direction="top">
+        <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
+        <div class="dropdown-content">
+          <paper-fab mini id="fullscreen" icon="icons:settings-overscan" title="full screen"></paper-fab>
+          <div class="fab-text">full screen</div>
+          <paper-fab mini id="stop" noink icon="av:stop" title="stop play"></paper-fab>
+          <div class="fab-text">stop</div>
+        </div>
+    </paper-fab-speed-dial>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-player',
+
+        properties: {
+          labels: {
+            notify: true,
+            observer: 'onLabelsChanged'
+          },
+          labelsCopy: {
+            notify: true,
+            value: []
+          },
+          group: {
+            notify: true
+          },
+          route: {
+            notify: true,
+            observer: 'onRouteChanged'
+          },
+          transition: {
+            notify: true,
+            value: 'carousel'
+          }
+        },
+
+        listeners: {
+          'setting.iron-overlay-closed': 'onSettingDialogClosed',
+          'stop.tap': 'onTapStop',
+          'fullscreen.tap': 'onTapFullscreen'
+        },
+
+        ready: function() {
+          this.playtime = 10
+        },
+
+        isSame: function(a, b) {
+          return a === b
+        },
+
+        filterCube: function(item) {
+          /* 필터내부에서 index를 계산하는 것은 권장되지는 않는 방법임 */
+          return this.labelsCopy.indexOf(item) < 6
+        },
+
+        showTransition: function() {
+          if(this.labels) {
+            this.labelsCopy = this.labels.slice()
+            this._startPlay()
+          } else {
+            // this.labelsCopy = []
+            this._stopPlay()
+          }
+        },
+
+        onRouteChanged: function(after) {
+
+          /* route가 변경되었을 때만, 작동한다. 편법이지만. */
+          if(after === this.getAttribute('data-route')) {
+            this.$.setting.open()
+          } else {
+            if(this.started)
+              this._stopPlay()
+          }
+        },
+
+        onSettingDialogClosed: function(e) {
+
+          this.showTransition()
+          /* focus 속성을 가진 것들 중에서, 스타일에 display:none 을 포함하지 않은 엘리먼트를 찾기 */
+          // this.$$(':not([style*="display: none"])[focus]').focus()
+          this.currentPlayer.focus()
+        },
+
+        onLabelsChanged: function(after) {
+          if(app.route === this.getAttribute('data-route')) {
+            this.showTransition()
+          }
+        },
+
+        onTapStop: function() {
+
+          this._stopPlay()
+          page(`/list/${this.group}`)
+        },
+
+        onTapFullscreen: function() {
+
+          this._fullscreen()
+          this.currentPlayer.focus()
+        },
+
+        _startPlay: function() {
+          /* 플레이가 시작되는 조건
+           * - labelsCopy가 채워질 때
+           */
+          if(this.interval)
+            clearInterval(this.interval)
+
+          this.currentPlayer = this.$$(':not([style*="display: none"])[focus]')
+
+          var self = this
+          this.interval = setInterval(function() {
+            if(self.interval)
+              self.currentPlayer.next()
+          }, this.playtime * 1000)
+
+          this.$.subscriber.start()
+
+          this.started = true
+        },
+
+        _stopPlay: function() {
+          /* 플레이가 종료되는 조건
+           * - 라우트가 바뀐다
+           * - 종료 버튼이 눌린다
+           * - labesCopy가 비워지게될 때
+           */
+          this.$.subscriber.stop()
+
+          if(this.interval)
+            clearInterval(this.interval)
+
+          this.labelsCopy = []
+          this.started = false
+        },
+
+        _showHideFab: function(show) {
+          this.$.fab.hidden = !show
+        },
+
+        _fullscreen: function(element) {
+
+          var self = this
+
+          if(this.requestFullScreen) {
+            // W3C
+            var listener = document.addEventListener("fullscreenchange", function(){
+              self._showHideFab(!document.isFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("fullscreenchange", listener)
+            });
+
+            this.requestFullScreen();
+
+          } else if(this.webkitRequestFullScreen) {
+            // Webkit
+            var listener = document.addEventListener("webkitfullscreenchange", function(){
+              self._showHideFab(!document.webkitIsFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("webkitfullscreenchange", listener)
+            });
+
+            this.webkitRequestFullScreen();
+
+          } else if(this.mozRequestFullScreen) {
+            // Firefox
+            var listener = document.addEventListener("mozfullscreenchange", function(){
+              self._showHideFab(!document.mozIsFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("mozfullscreenchange", listener)
+            });
+
+            this.mozRequestFullScreen();
+
+          } else if(videoContainer.msRequestFullscreen) {
+            // Explorer
+            var listener = document.addEventListener("MSFullscreenChange", function(){
+              self._showHideFab(!document.msFullscreenElement)
+              if(!document.isFullScreen)
+                document.removeEventListener("MSFullscreenChange", listener)
+            });
+
+            this.msRequestFullscreen();
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

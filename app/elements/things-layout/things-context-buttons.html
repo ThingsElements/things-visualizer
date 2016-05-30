@@ -1,0 +1,158 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-context-buttons">
+  <template>
+    <style>
+      paper-button {
+        min-width:initial;padding:7px 12px;margin:0 !important;
+        border-right:1px solid rgba(0,0,0,.1);border-left:1px solid rgba(255,255,255,.1);border-radius:0 !important;
+        background-color:var(--paper-cyan-800);
+        color:#fff;
+      }
+      section{
+        display:flex;
+        text-align:right;
+      }
+    </style>
+
+    <div>
+      <iron-pages attr-for-selected="data-route"
+                  selected="{{route}}"
+                  id="action">
+
+        <section data-route="list">
+          <paper-button data-action$="/player/{{groupId}}">play</paper-button>
+        </section>
+
+        <section data-route="player">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action="fullscreen"
+                        target="things-player">
+                        fullscreen
+          </paper-button>
+        </section>
+
+        <section data-route="info">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+        </section>
+
+        <section data-route="modeler">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+        </section>
+
+        <section data-route="variable">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+          <paper-button data-action$="/print/{{labelId}}">print</paper-button>
+        </section>
+
+        <section data-route="version">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+          <paper-button data-action$="/print/{{labelId}}">print</paper-button>
+        </section>
+
+        <section data-route="preview">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+        </section>
+
+        <section data-route="export">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+          <paper-button data-action$="/preview/{{labelId}}">preview</paper-button>
+          <paper-button data-action$="/print/{{labelId}}">print</paper-button>
+        </section>
+
+        <section data-route="print">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+          <paper-button data-action$="/preview/{{labelId}}">preview</paper-button>
+          <paper-button data-action$="/export/{{labelId}}">export</paper-button>
+          <paper-button data-action$="/print-history/{{labelId}}">history</paper-button>
+        </section>
+
+        <section data-route="print-history">
+          <paper-button data-action$="/list/{{groupId}}">list</paper-button>
+          <paper-button data-action$="/modeler/{{labelId}}">modeler</paper-button>
+          <paper-button data-action$="/preview/{{labelId}}">preview</paper-button>
+          <paper-button data-action$="/print/{{labelId}}">print</paper-button>
+        </section>
+
+      </iron-pages>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-context-buttons',
+
+        properties: {
+          route: {
+            notify: true
+          },
+          labelId: {
+            notify: true
+          },
+          groupId: {
+            notify: true
+          }
+        },
+
+        ready: function() {
+        },
+
+        listeners: {
+          'action.tap': 'onTapAction'
+        },
+
+        _fullscreen: function(element) {
+
+          if(element.requestFullScreen)
+              element.requestFullScreen();
+          else if(element.webkitRequestFullScreen)
+              element.webkitRequestFullScreen();
+          else if(element.mozRequestFullScreen)
+              element.mozRequestFullScreen();
+        },
+
+        onTapAction: function(e) {
+
+          var button = e.target;
+
+          while (!button.hasAttribute('data-action') && button !== document.body)
+            button = button.parentElement;
+
+          var action = button.getAttribute('data-action')
+          var target, element
+
+          switch(action) {
+          case 'fullscreen':
+
+            target = button.getAttribute('target')
+            element = Polymer.dom(document).querySelector(target)
+
+            this._fullscreen(element)
+            break;
+
+          case 'open':
+
+            /* open dialog */
+            target = button.getAttribute('target')
+            element = Polymer.dom(document).querySelector(target)
+
+            element.open()
+            break;
+
+          default:
+            page(action)
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-print-agent">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-print-agent',
+
+        properties: {
+          command: {
+            type: String,
+            observer: 'onCommandChanged'
+          }
+        },
+
+        ready: function() {
+        },
+
+        onCommandChanged: function(after) {
+          console.log(after)
+          // this.$["ws"].send(after)
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

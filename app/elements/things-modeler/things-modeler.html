@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="things-modeler">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+      div {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+      }
+      things-modeler-scene {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex)
+      }
+
+      *::shadow {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+      }
+
+    </style>
+
+    <things-modeler-htoolbar scene="[[scene]]"
+                             selected="[[selected]]"
+                             hide-property="{{hideProperty}}"
+                             show-center-control="{{showCenterControl}}">
+    </things-modeler-htoolbar>
+
+    <div>
+
+      <things-modeler-vtoolbar scene="[[scene]]"
+                               mode="{{mode}}">
+      </things-modeler-vtoolbar>
+
+      <things-modeler-scene model="[[model]]"
+                            label="{{label}}"
+                            scene="{{scene}}"
+                            scenemap="{{scenemap}}"
+                            selected="{{selected}}"
+                            mode="{{mode}}"
+                            show-center-control="[[showCenterControl]]">
+      </things-modeler-scene>
+
+      <things-modeler-property id="property"
+                               scene="[[scene]]"
+                               scenemap="[[scenemap]]"
+                               selected="[[selected]]"
+                               collapse="[[hideProperty]]">
+      </things-modeler-property>
+
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-modeler',
+
+        properties: {
+          baseUrl: {
+            notify: true
+          },
+          scene: {
+            notify: true
+          },
+          label: {
+            type: Object,
+            notify: true
+          },
+          screen: {
+            notify: true
+          },
+          model: {
+            notify: true,
+            computed: 'evalModel(label)'
+          },
+          hideProperty: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        evalModel: function(label) {
+          if(label.model)
+            return eval("(" + label.model + ")")
+
+          return {
+            components: [],
+            variables: []
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

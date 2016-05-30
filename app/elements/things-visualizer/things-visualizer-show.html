@@ -1,0 +1,89 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="things-visualizer-show">
+  <template>
+
+    <style include="paper-dialog-shared-styles">
+    </style>
+
+    <h2>New Label</h2>
+
+    <paper-input label="name"
+                 value="{{name}}"
+                 auto-validate
+                 pattern="[a-zA-Z-]*"
+                 error-message="letters & dash only!">
+    </paper-input>
+    <paper-textarea label="description"
+                    value="{{description}}">
+    </paper-textarea>
+
+    <paper-dropdown-menu label="group"
+                         value="{{group}}"
+                         vertical-align="top"
+                         horizontal-align="left">
+
+      <paper-menu class="dropdown-content" selected="{{selectedGroup(group)}}">
+        <template is="dom-repeat" items="{{groups}}">
+          <paper-item>{{item.id}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+    <paper-input label="width" type="number"></paper-input>
+    <paper-input label="height" type="number"></paper-input>
+
+    <div class="buttons">
+      <paper-button dialog-confirm autofocus>create</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-visualizer-show',
+
+        properties: {
+          group: {
+            type: String,
+            notify: true
+          },
+          groups: {
+            notify: true
+          },
+          name: {
+            notify: true
+          },
+          description: {
+            notify: true
+          }
+        },
+
+        listeners: {
+        },
+
+        behaviors: [
+          Polymer.PaperDialogBehavior
+        ],
+
+        created: function() {
+        },
+
+        selectedGroup: function(group) {
+          for(var i = 0;i < this.groups.length;i++) {
+            if(this.groups[i].id === group)
+              return i
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

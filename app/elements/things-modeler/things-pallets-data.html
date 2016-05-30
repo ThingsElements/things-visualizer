@@ -1,0 +1,755 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-pallets-data">
+  <template>
+
+    <style>
+    </style>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-pallets-data',
+
+        properties: {
+          pallets: {
+            notify: true
+          }
+        },
+
+        _barcodes: function() {
+          return [{
+            type: 'code11'
+          }, {
+            type: 'interleaved2of5'
+          }, {
+            type: 'code39'
+          }, {
+            type: 'code49'
+          }, {
+            type: 'planet'
+          }, {
+            type: 'pdf417'
+          }, {
+            type: 'ean8'
+          }, {
+            type: 'upce'
+          }, {
+            type: 'code93'
+          }, {
+            type: 'codablock'
+          }, {
+            type: 'code128'
+          }, {
+            type: 'maxicode',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }, {
+            type: 'ean13',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'micropdf417',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }, {
+            type: 'industrial2of5',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'standard2of5',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }, {
+            type: 'ansicodabar',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'logmars',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }, {
+            type: 'msi',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'plessey',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'qrcode',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'upca',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'datamatrix',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'postal',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }].map(function(type) {
+            type.model = {
+              type: 'barcode',
+              top: 100,
+              left: 100,
+              // width: ,
+              height: 300,
+              symbol: type.type,
+              text: '1234567890',
+              scale_h: 1,
+              scale_w: 2,
+              rot: 'N',
+              alpha: 1,
+              hidden: false
+            }
+            return type
+          })
+        },
+
+        _rect: function() {
+          return [{
+            type: 'rect',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model: {
+              type: 'rect',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'round rect',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'rect',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              round: 30,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'half round rect',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'half-roundrect',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              round: 30,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        _ellipse: function() {
+          return [{
+            type: 'circle',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model: {
+              type: 'ellipse',
+              rx: 200,
+              ry: 200,
+              cx: 150,
+              cy: 150,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'ellipses',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model: {
+              type: 'ellipse',
+              rx: 200,
+              ry: 200,
+              cx: 150,
+              cy: 150,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'donut',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model: {
+              type: 'donut',
+              rx: 200,
+              ry: 200,
+              cx: 150,
+              cy: 150,
+              ratio: 30,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        _shape: function() {
+          return [{
+           type: 'tryangle',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model:{
+              type: 'triangle',
+              x1: 200,
+              y1: 200,
+              x2: 100,
+              y2: 400,
+              x3: 300,
+              y3: 400,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'star',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model:{
+              type: 'star',
+              rx: 150,
+              ry: 150,
+              cx: 200,
+              cy: 200,
+              ratio: 30,
+              wing: 5,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'cloud',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model:{
+              type: 'cloud',
+              x: 600,
+              y: 150,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        _polygons: function() {
+          return [{
+            type: 'polyline',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'polygon',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }].map(function(type) {
+            type.model = {
+              type: type.type,
+              path: [{x: 100, y: 100}, {x: 200, y: 100}, {x: 200, y: 200}, {x: 100, y: 200}],
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+            return type
+          })
+        },
+
+        _lines: function() {
+          return [{
+            type: 'line',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model:{
+              type: 'line',
+              x1: 100,
+              y1: 100,
+              x2: 200,
+              y2: 200,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 3,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'dash',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'line',
+              x1: 100,
+              y1: 100,
+              x2: 200,
+              y2: 200,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 3,
+              lineDash: 'round-dot',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'single arrow',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'line',
+              x1: 100,
+              y1: 100,
+              x2: 200,
+              y2: 200,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 3,
+              hidden: false,
+              lineWidth: 3,
+              lineDash: 'solid',
+              begin: 'arrow',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'both arrow',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'line',
+              x1: 100,
+              y1: 100,
+              x2: 200,
+              y2: 200,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 3,
+              lineDash: 'solid',
+              begin: 'arrow',
+              end: 'arrow',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        _texts: function() {
+          return [{
+            type: 'simple',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0"
+          }, {
+            type: 'animated',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ"
+          }].map(function(type) {
+            type.model = {
+              type: 'text',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              text: type.type,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              textType: 'F',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+            return type
+          })
+        },
+
+        _images: function() {
+          return [{
+            type: 'color image',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ1Q6MD-5aczhuEQoow-FQdilRO4bl03-pGx78KiG1YCKUOOgz0",
+            model: {
+              type: 'image-view',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              gray: false,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'gray image',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'image-view',
+              left: 100,
+              top: 100,
+              width:300,
+              height: 300,
+              gray: true,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              isGrf: true,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'movie',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'movie-clip',
+              top: 100,
+              left: 100,
+              width: 150,
+              height: 150,
+              src: 'http://upload.wikimedia.org/wikipedia/commons/7/79/Big_Buck_Bunny_small.ogv',
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        _gauge: function() {
+          return [{
+            type: 'gauge-circle',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'gauge-circle',
+              cx: 200,
+              cy: 200,
+              rx: 200,
+              ry: 200,
+              fontSize: 80,
+              fillStyle: '#ff00ff',
+              // strokeStyle: '#552555',
+              fontColor: '#FF0000',
+              lineWidth: 5,
+              value: 65,
+              startValue: 0,
+              endValue: 220,
+              step: 20,
+              fontColor: 'black',
+              colorStops:[
+                { position:30,
+                  color: '#00ff00'},
+                { position: 100,
+                  color: '#ffff00'},
+                { position: 220,
+                  color: '#ff0000'}],
+              textFillStyle: 'blue',
+              stepFillStyle: 'gray',
+              needleFillStyle: 'red',
+              ratio: 70,
+              startAngle: 0,
+              endAngle: 180,
+              subStep: 2,
+              subTextSize: 5,
+              alpha: 1,
+            }
+          }, {
+            type: 'gauge-vertical',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'gauge-vertical',
+              top: 200,
+              left: 200,
+              width: 100,
+              height: 500,
+              value: 65,
+              fillStyle: '#ff00ff',
+              startValue: 0,
+              endValue: 240,
+              needleFillStyle: 'red',
+              stepFillStyle: 'black',
+              textFillStyle: 'black',
+              needleSize: 7,
+              stepNeedleSize:2,
+              subTextSize:10,
+              step: 20,
+              subStep: 5,
+              showStepText: true,
+              showStartValue: true,
+              showEndValue: true,
+              showStepLine: true,
+              showSubStep: true,
+              colorStops:[
+                { position:30,
+                  color: '#00ff00'},
+                { position: 100,
+                  color: '#ffff00'},
+                { position: 220,
+                  color: '#ff0000'}],
+              alpha: 1
+            }
+           }, {
+            type: 'gauge-horizon',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'gauge-horizon',
+              top: 200,
+              left: 200,
+              width: 500,
+              height: 100,
+              value: 110,
+              fillStyle: '#ff00ff',
+              startValue: 0,
+              endValue: 240,
+              needleFillStyle: 'red',
+              stepFillStyle: 'black',
+              textFillStyle: 'black',
+              stepNeedleSize:2,
+              needleSize: 7,
+              subTextSize:7,
+              step: 20,
+              subStep: 6,
+              showStepText: true,
+              showStartValue: true,
+              showEndValue: true,
+              showStepLine: true,
+              showSubStep: true,
+              colorStops:[
+                { position:30,
+                  color: '#00ff00'},
+                { position: 100,
+                  color: '#ffff00'},
+                { position: 220,
+                  color: '#ff0000'}],
+              alpha: 1
+            }
+          }, {
+            type: 'clock-analog',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'clock-analog',
+              cx: 200,
+              cy: 200,
+              rx: 200,
+              ry: 200,
+              fillStyle: '#ffffff',
+              strokeStyle: '#000000',
+              lineWidth: 5,
+              alpha: 1,
+            }
+          }, {
+            type: 'clock-text',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'clock-text',
+              top: 200,
+              left: 200,
+              width: 400,
+              height: 100,
+              fontColor: '#000000',
+              fontSize: 20,
+              alpha: 1,
+            }
+          }, {
+            type: 'compass',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'compass',
+              cx: 200,
+              cy: 200,
+              rx: 200,
+              ry: 200,
+              value: 0,
+              fontSize: 80,
+              fillStyle: '#F2F2F2',
+              strokeStyle: '#AAAAAA',
+              lineWidth: 10,
+              fontColor: '#ff0000',
+              alpha: 1,
+            }
+          }]
+        },
+        _chart: function() {
+          return [{
+            type: 'chart',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'chart',
+              top: 100,
+              left: 100,
+              width: 100,
+              height: 300,
+              fillStyle: '#fff',
+              strokeStyle: '#000',
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'progress bar',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'progress-vertical',
+              top: 200,
+              left: 200,
+              width: 100,
+              height: 500,
+              value: 40,
+              fillStyle: '#ffff00',
+              strokeStyle: '#000',
+              text: '#{value}%',
+              fontSize: 40,
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }, {
+            type: 'progress-circle',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'progress-circle',
+              cy: 200,
+              cx: 200,
+              rx: 200,
+              ry: 200,
+              value: 40,
+              strokeStyle: '#c090dd',
+              blankStrokeStyle: '#552555',
+              text: '#{value}%',
+              fontSize: 60,
+              alpha: 1,
+              hidden: false,
+              lineWidth: 40,
+              lineDash: 'solid',
+              lineCap: 'round'
+            }
+          }, {
+            type: 'indoor-map',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'indoor-map',
+              left: 100,
+              top: 100,
+              width: 600,
+              height: 400,
+              fontSize: 80,
+              fontColor: '#000000',
+              lineWidth: 10,
+              activeIndex: 0,
+              alpha: 1,
+              components: [{
+                type: 'floor',
+                left: 0,
+                top: 0,
+                width: 600,
+                height: 400,
+                fontSize: 80,
+                fontColor: 'black',
+                fillStyle: 'white',
+                lineWidth: 0,
+                alpha: 1
+              }]
+            }
+          }, {
+            type: 'rack',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model: {
+              type: 'rack',
+              left: 100,
+              top: 100,
+              width: 100,
+              height: 100,
+              depth: 100,
+              shelves: 1,
+              fillStyle: '#ffffff',
+              strokeStyle: '#000000',
+              lineWidth: 5,
+              alpha: 1
+            }
+          }]
+        },
+
+        _3D: function() {
+          return [{
+            type: 'cube',
+            image: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdKaKEAUa4otzqMmJiUBI8PkA5tKqXSRIJqMo3pPLKdH3tGyEvwQ",
+            model:{
+              type: 'cube',
+              top: 150,
+              left: 450,
+              length: 100,
+              fallLength: 500,
+              alpha: 1,
+              hidden: false,
+              lineWidth: 5,
+              lineDash: 'solid',
+              lineCap: 'butt'
+            }
+          }]
+        },
+
+        ready: function() {
+          this.pallets = {
+            barcode: this._barcodes(),
+            rect: this._rect(),
+            ellipse: this._ellipse(),
+            'other shape': this._shape(),
+            polygon: this._polygons(),
+            line: this._lines(),
+            text: this._texts(),
+            image: this._images(),
+            gauge: this._gauge(),
+            chart: this._chart(),
+            '3D': this._3D()
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

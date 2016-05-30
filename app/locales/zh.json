@@ -1,0 +1,11 @@
+{
+    "zh": {
+        "recent-list": "最近打开列表",
+        "recent-updated-order": "最近更新列表",
+        "recent-printed-order": "最近打印列表",
+        "recent-created-order": "最近创建列表",
+        "recent-released-order":"最近发布列表",
+        "group-list": "分组列表",
+        "play-group-list": "Play Group列表"
+    }
+}

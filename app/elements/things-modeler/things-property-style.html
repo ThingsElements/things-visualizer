@@ -1,0 +1,561 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<link rel="import" href="../../bower_components/things-designer-elements/things-editor-color.html">
+<link rel="import" href="../../bower_components/things-designer-elements/things-editor-color-style.html">
+
+<dom-module id="things-property-style">
+  <template>
+    <style>
+      :host {
+        display: block;
+        max-width:240px;
+        min-width:240px;
+        background-color:var(--paper-blue-grey-50);
+      }
+      :host paper-button{
+        background-color:var(--paper-blue-grey-500);
+        width:100%;
+        border-radius:0;
+        border-bottom:1px solid var(--paper-blue-grey-600);
+        padding:5px 0;margin:0;
+        color:#fff;font-size:11px;
+      }
+      :host paper-listbox paper-item{padding:4px 7px;min-height:30px;border-bottom:1px solid var(--paper-blue-grey-100);font-size:12px;}
+      :host iron-image{margin-right:7px;width:70px;height:40px;}
+      :host .content{background-color:rgba(255,255,255,.5);}
+      :host paper-slider{
+        --paper-slider-active-color:var(--paper-cyan-600);
+        --paper-slider-knob-color:var(--paper-cyan-600);
+        margin-top:5px;padding:0;
+        height: 20px;
+      }
+      paper-slider::shadow #sliderBar #progressContainer{background-color:var(--paper-blue-grey-100);}
+      paper-slider::shadow #sliderBar{margin-top:8px;padding:7px 0;}
+      :host .vline{display:block;border-left:1px solid rgba(255,255,255,.07);border-right:1px solid rgba(0,0,0,.1);width:0px;height:18px;margin:0 4px;}
+      :host paper-slider::shadow #sliderKnobInner{width:10px;height:10px;margin-top:11px;}
+      :host paper-slider::shadow #sliderContainer{margin:5px !important;}
+      :host paper-slider::shadow paper-input{overflow:initial !important;}
+      :host paper-slider::shadow paper-input .underline{display:none;}
+      :host fieldset paper-slider{width:71% !important;}
+      :host fieldset paper-slider::shadow paper-input input{
+        border:1px solid #ccc;background-color:#fff;
+        font-size:12px !important;line-height:20px !important
+      }
+
+      paper-dropdown-menu::shadow paper-input-container{padding:0;}
+      paper-dropdown-menu::shadow .paper-input-container input{max-height:18px;}
+      paper-dropdown-menu::shadow .underline .unfocused-line{background-color:#ccc}
+      paper-dropdown-menu::shadow .underline .focused-line{background-color:#00acc1}
+      paper-dropdown-menu.line-type-round-dot::shadow .paper-input-container input{background:url(/images/icon-properties-line-type.png) 50% -45px no-repeat;}
+      .full-width select{width:48%;margin-right:2px;}
+      .full-width input.width10per{margin-left:4px;}
+    </style>
+
+    <fieldset>
+      <label>opacity</label>
+      <paper-slider min="0" max="1" step="0.1" value="{{model.alpha::change}}" editable></paper-slider>
+    </fieldset>
+
+    <fieldset class="column-double-iconlabel">
+      <legend>text style</legend>
+      <div class="full-width">
+        <select value="{{model.fontFamily::change}}">
+          <option>default font</option>
+          <option>Malgun Gothic</option>
+          <option>Gothic</option>
+          <option>Gulim</option>
+          <option>Arial</option>
+          <option>Fixedsys</option>
+          <option>sans-serif</option>
+          <option>Disoluta font FFP</option>
+          <option>Bitstream Vera Serif Bold</option>
+        </select>
+        <label class="text-type5"></label>
+        <things-editor-color value="{{model.fontColor}}">
+        </things-editor-color>
+      </div>
+      <label class="text-type1"></label>
+      <input type="number" value-as-number="{{model.fontSize::change}}">
+      <label class="text-type2"></label>
+      <input type="number">
+      <label class="text-type3"></label>
+      <input type="number">
+      <label class="text-type4"></label>
+      <input type="number">
+      <div id="text-style" class="btn-group">
+        <paper-button toggles active="{{model.bold}}" class="icon-properties text-bold"></paper-button>
+        <paper-button toggles active="{{model.italic}}" class="icon-properties text-italic"></paper-button>
+        <paper-button toggles active="{{model.underLine}}" class="icon-properties text-underline"></paper-button>
+        <paper-button toggles active="{{model.strike}}" class="icon-properties text-strikethrough"></paper-button>
+<!--
+        <paper-button toggles data-style="uppercase" class="icon-properties text-allcaps"></paper-button>
+        <paper-button toggles data-style="lowercase" class="icon-properties text-smallcaps"></paper-button>
+ -->
+      </div>
+    </fieldset>
+
+    <fieldset class="same-width">
+      <legend>fill style</legend>
+      <things-editor-color-style value="{{model.fillStyle}}">
+      </things-editor-color-style>
+    </fieldset>
+
+    <fieldset class="same-width">
+      <legend>line style</legend>
+
+      <label>width</label>
+      <input type="number" value-as-number="{{model.lineWidth::change}}"/>
+
+      <label>Stroke Color</label>
+      <things-editor-color value="{{model.strokeStyle}}">
+      </things-editor-color>
+
+      <label>line type</label>
+      <paper-dropdown-menu no-label-float="true" class="line-type solid">
+      <!-- solid는 선택된 항목 보여주기위한 class로 하위 paper-item의 class와 동일하게 -->
+        <paper-menu class="dropdown-content" selected="{{model.lineDash}}" attr-for-selected="name" >
+          <paper-item class="solid" name="solid"></paper-item>
+          <paper-item class="round-dot" name="round-dot"></paper-item>
+          <paper-item class="square-dot" name="square-dot"></paper-item>
+          <paper-item class="dash" name="dash"></paper-item>
+          <paper-item class="dash-dot" name="dash-dot"></paper-item>
+          <paper-item class="long-dash" name="long-dash"></paper-item>
+          <paper-item class="long-dash-dot" name="long-dash-dot"></paper-item>
+          <paper-item class="long-dash-dot-dot" name="long-dash-dot-dot"></paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <label>cap type</label>
+      <select class="select-content" value="{{model.lineCap::change}}">
+        <option value="butt">square</option>
+        <option value="round">round</option>
+      </select>
+
+      <label>join type</label>
+      <select class="select-content" value="{{model.lineJoin::change}}">
+        <option value="miter">miter</option>
+        <option value="round">round</option>
+        <option value="bevel">bevel</option>
+      </select>
+
+      <label>begin type</label>
+      <paper-dropdown-menu no-label-float="true" class="arrow-type begin-no"><!-- begin-no는 선택된 항목 보여주기위한 class로 하위 paper-item의 class와 동일하게 -->
+        <paper-menu class="dropdown-content" selected="{{model.begin}}" attr-for-selected="name">
+          <paper-item class="begin-no" name="none"></paper-item>
+          <paper-item class="begin-arrow" name="arrow"></paper-item>
+          <paper-item class="begin-open-arrow" name="open-arrow"></paper-item>
+          <paper-item class="begin-stealth-arrow" name="sharp-arrow"></paper-item>
+          <paper-item class="begin-diamond-arrow" name="diamond"></paper-item>
+          <paper-item class="begin-oval-arrow" name="oval"></paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <label>begin size</label>
+      <paper-dropdown-menu no-label-float="true" class="arrow-type begin-size1"><!-- begin-size1는 선택된 항목 보여주기위한 class로 하위 paper-item의 class와 동일하게 -->
+        <paper-menu class="dropdown-content" selected="{{model.beginSize}}" attr-for-selected="name">
+          <paper-item class="begin-size1" name="size1"></paper-item>
+          <paper-item class="begin-size2" name="size2"></paper-item>
+          <paper-item class="begin-size3" name="size3"></paper-item>
+          <paper-item class="begin-size4" name="size4"></paper-item>
+          <paper-item class="begin-size5" name="size5"></paper-item>
+          <paper-item class="begin-size6" name="size6"></paper-item>
+          <paper-item class="begin-size7" name="size7"></paper-item>
+          <paper-item class="begin-size8" name="size8"></paper-item>
+          <paper-item class="begin-size9" name="size9"></paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <label>end type</label>
+      <paper-dropdown-menu no-label-float="true" class="arrow-type end-no"><!-- end-no는 선택된 항목 보여주기위한 class로 하위 paper-item의 class와 동일하게 -->
+        <paper-menu class="dropdown-content" selected="{{model.end}}" attr-for-selected="name">
+          <paper-item class="end-no" name="none"></paper-item>
+          <paper-item class="end-arrow" name="arrow"></paper-item>
+          <paper-item class="end-open-arrow" name="open-arrow"></paper-item>
+          <paper-item class="end-stealth-arrow" name="sharp-arrow"></paper-item>
+          <paper-item class="end-diamond-arrow" name="diamond"></paper-item>
+          <paper-item class="end-oval-arrow" name="oval"></paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <label>end size</label>
+      <paper-dropdown-menu no-label-float="true" class="arrow-type end-size1" ><!-- end-size1는 선택된 항목 보여주기위한 class로 하위 paper-item의 class와 동일하게 -->
+        <paper-menu class="dropdown-content" selected="{{model.endSize}}" attr-for-selected="name">
+          <paper-item class="end-size1" name="size1"></paper-item>
+          <paper-item class="end-size2" name="size2"></paper-item>
+          <paper-item class="end-size3" name="size3"></paper-item>
+          <paper-item class="end-size4" name="size4"></paper-item>
+          <paper-item class="end-size5" name="size5"></paper-item>
+          <paper-item class="end-size6" name="size6"></paper-item>
+          <paper-item class="end-size7" name="size7"></paper-item>
+          <paper-item class="end-size8" name="size8"></paper-item>
+          <paper-item class="end-size9" name="size9"></paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+    </fieldset>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'rect')]]">
+      <fieldset>
+        <legend>rect style</legend>
+        <label>round</label>
+        <input type="number" value-as-number="{{model.round::change}}" min="0" max="100" step="1"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'barcode')]]">
+      <fieldset class="column-double">
+        <legend>barcode style</legend>
+        <label>scale_W</label>
+        <input type="number" value-as-number="{{model.scale_w::change}}" min="0" max="10" step="1"/>
+        <label>scale_H</label>
+        <input type="number" value-as-number="{{model.scale_h::change}}" min="0" max="10" step="1"/>
+        <label>rot</label>
+        <select class="select-content" value="{{model.rot::change}}">
+          <option value="N">0도</option>
+          <option value="R">90도</option>
+          <option value="I">180도</option>
+          <option value="B">270도</option>
+        </select>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'donut')]]">
+      <fieldset>
+        <legend>donut style</legend>
+        <label>ratio</label>
+        <input type="number" value-as-number="{{model.ratio::change}}" min="0" max="100" step="1"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'star')]]">
+      <fieldset class="column-double">
+        <legend>star style</legend>
+        <label>ratio</label>
+        <input type="number" value-as-number="{{model.ratio::change}}" min="0" max="100" step="1"/>
+        <label>wing</label>
+        <input type="number" value-as-number="{{model.wing::change}}" min="3" step="1"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'text')]]">
+      <fieldset>
+        <legend>text style</legend>
+        <label>Text fit</label>
+        <select selected="{{model.textType::change}}">
+          <option value="S">Default</option>
+          <option value="F">F</option>
+          <option value="W">W</option>
+        </select>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'progress-circle')]]">
+      <fieldset class="same-width">
+        <legend>progress style</legend>
+        <label>value</label>
+        <input type="number" value-as-number="{{model.value::change}}" min="0" max="100" step="1"/>
+
+        <label>blankStrokeStyle</label>
+        <things-editor-color value="{{model.blankStrokeStyle}}">
+        </things-editor-color>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'progress-vertical')]]">
+      <fieldset class="column-double">
+        <legend>progress style</legend>
+        <label>value</label>
+        <input type="number" value-as-number="{{model.value::change}}" min="0" max="100" step="1"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'compass')]]">
+      <fieldset class="column-double">
+        <legend>Compass style</legend>
+        <label>value</label>
+        <input type="number" value-as-number="{{model.value::change}}" min="0" max="100" step="1"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'image-view')]]">
+      <fieldset class="same-width">
+        <legend>Image View</legend>
+        <label>IsGrf</label>
+        <input type="checkbox" checked="{{model.isGrf::change}}">
+        <label>src</label>
+        <input type="text" value="{{model.src::change}}"/>
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'gauge-circle')]]">
+      <fieldset class="same-width">
+        <legend>Gauge style</legend>
+
+        <label>Value</label>
+        <input type="number" value-as-number="{{model.value::change}}"/>
+
+        <label>StartValue</label>
+        <input type="number" value-as-number="{{model.startValue::change}}" min="0" max="100" step="1" numberonly="true" />
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStartValue::change}}" required>ShowStartValue
+        </div>
+
+        <label>EndValue</label>
+        <input type="number" value-as-number="{{model.endValue::change}}" min="0" max="100" step="1"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showEndValue::change}}" required>ShowEndValue
+        </div>
+
+        <label>Step</label>
+        <input type="number" value-as-number="{{model.step::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepLine::change}}" required>ShowStepLine
+        </div>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepText::change}}" required>ShowStepText
+        </div>
+
+        <label>SubTextSize</label>
+        <input type="number" value-as-number="{{model.subTextSize::change}}"/>
+
+        <label>SubStep</label>
+        <input type="number" value-as-number="{{model.subStep::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showSubStep::change}}" required>ShowSubStep
+        </div>
+
+        <label>StepNeedleSize</label>
+        <input type="number" value-as-number="{{model.stepNeedleSize::change}}"/>
+
+        <label>StartAngle</label>
+        <input type="number" value-as-number="{{model.startAngle::change}}" min="0" max="360" step="1"/>
+
+        <label>EndAngle</label>
+        <input type="number" value-as-number="{{model.endAngle::change}}" min="0" max="360" step="1"/>
+
+        <label>TextFillStyle</label>
+        <things-editor-color value="{{model.textFillStyle}}">
+        </things-editor-color>
+
+        <label>NeedleFillStyle</label>
+        <things-editor-color value="{{model.needleFillStyle}}">
+        </things-editor-color>
+
+        <label>InnerCircleFillStyle</label>
+        <things-editor-color value="{{model.innerCircleFillStyle}}">
+        </things-editor-color>
+
+        <label>StepFillStyle</label>
+        <things-editor-color value="{{model.stepFillStyle}}">
+        </things-editor-color>
+
+        <label>ColorStops</label>
+        <things-editor-color-stops type="gradient"
+                                   min="[[model.startValue]]"
+                                   max="[[model.endValue]]"
+                                   value="{{model.colorStops}}">
+        </things-editor-color-stops>
+
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'gauge-vertical')]]">
+      <fieldset class="same-width">
+        <legend>Gauge style</legend>
+
+        <label>Value</label>
+        <input type="number" value-as-number="{{model.value::change}}"/>
+
+        <label>StartValue</label>
+        <input type="number" value-as-number="{{model.startValue::change}}" min="0" max="100" step="1" numberonly="true" />
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStartValue::change}}" required>ShowStartValue
+        </div>
+
+        <label>EndValue</label>
+        <input type="number" value-as-number="{{model.endValue::change}}" min="0" max="100" step="1"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showEndValue::change}}" required>ShowEndValue
+        </div>
+
+        <label>Step</label>
+        <input type="number" value-as-number="{{model.step::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepLine::change}}" required>ShowStepLine
+        </div>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepText::change}}" required>ShowStepText
+        </div>
+
+        <label>SubTextSize</label>
+        <input type="number" value-as-number="{{model.subTextSize::change}}"/>
+
+        <label>SubStep</label>
+        <input type="number" value-as-number="{{model.subStep::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showSubStep::change}}" required>ShowSubStep
+        </div>
+
+        <label>StepNeedleSize</label>
+        <input type="number" value-as-number="{{model.stepNeedleSize::change}}"/>
+
+        <label>TextFillStyle</label>
+        <things-editor-color value="{{model.textFillStyle}}">
+        </things-editor-color>
+
+        <label>NeedleFillStyle</label>
+        <things-editor-color value="{{model.needleFillStyle}}">
+        </things-editor-color>
+
+        <label>NeedleSize</label>
+        <input type="number" value-as-number="{{model.needleSize::change}}"/>
+
+        <label>StepFillStyle</label>
+        <things-editor-color value="{{model.stepFillStyle}}">
+        </things-editor-color>
+
+        <label>ColorStops</label>
+        <things-editor-color-stops type="solid"
+                                   min="[[model.startValue]]"
+                                   max="[[model.endValue]]"
+                                   value="{{model.colorStops}}">
+        </things-editor-color-stops>
+
+      </fieldset>
+    </template>
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'gauge-horizon')]]">
+      <fieldset class="same-width">
+        <legend>Gauge style</legend>
+
+        <label>Value</label>
+        <input type="number" value-as-number="{{model.value::change}}"/>
+
+        <label>StartValue</label>
+        <input type="number" value-as-number="{{model.startValue::change}}" min="0" max="100" step="1" numberonly="true" />
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStartValue::change}}" required>ShowStartValue
+        </div>
+
+        <label>EndValue</label>
+        <input type="number" value-as-number="{{model.endValue::change}}" min="0" max="100" step="1"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showEndValue::change}}" required>ShowEndValue
+        </div>
+
+        <label>Step</label>
+        <input type="number" value-as-number="{{model.step::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepLine::change}}" required>ShowStepLine
+        </div>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showStepText::change}}" required>ShowStepText
+        </div>
+
+        <label>SubTextSize</label>
+        <input type="number" value-as-number="{{model.subTextSize::change}}"/>
+
+        <label>SubStep</label>
+        <input type="number" value-as-number="{{model.subStep::change}}"/>
+
+        <div class="merge-column">
+          <input type="checkbox" checked="{{model.showSubStep::change}}" required>ShowSubStep
+        </div>
+
+        <label>StepNeedleSize</label>
+        <input type="number" value-as-number="{{model.stepNeedleSize::change}}"/>
+
+        <label>TextFillStyle</label>
+        <things-editor-color value="{{model.textFillStyle}}">
+        </things-editor-color>
+
+        <label>NeedleFillStyle</label>
+        <things-editor-color value="{{model.needleFillStyle}}">
+        </things-editor-color>
+
+        <label>NeedleSize</label>
+        <input type="number" value-as-number="{{model.needleSize::change}}"/>
+
+        <label>StepFillStyle</label>
+        <things-editor-color value="{{model.stepFillStyle}}">
+        </things-editor-color>
+
+        <label>ColorStops</label>
+        <things-editor-color-stops type="solid"
+                                   min="[[model.startValue]]"
+                                   max="[[model.endValue]]"
+                                   value="{{model.colorStops}}">
+        </things-editor-color-stops>
+
+      </fieldset>
+    </template>
+
+
+    <template is="dom-if" if="[[_isTypeofModel(model, 'indoor-map')]]">
+      <fieldset class="same-width">
+        <legend>Indoor style</legend>
+
+        <label>Value</label>
+        <input type="number" value-as-number="{{model.value::change}}"/>
+
+      </fieldset>
+    </template>
+
+  </template>
+
+  <template is="dom-if" if="[[_isTypeofModel(model, 'rack')]]">
+      <fieldset class="same-width">
+        <legend>Rack style</legend>
+
+        <label>Depth</label>
+        <input type="number" value-as-number="{{model.depth::change}}"/>
+
+        <label>Shelves</label>
+        <input type="number" value-as-number="{{model.shelves::change}}"/>
+
+      </fieldset>
+    </template>
+
+  </template>
+
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-property-style',
+
+        properties: {
+          model: {
+            notify: true
+          }
+        },
+
+        _isTypeofModel: function(model, type) {
+          return model && model.type === type
+        }
+
+      })
+
+    })();
+
+  </script>
+</dom-module>

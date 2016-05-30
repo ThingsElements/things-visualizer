@@ -1,0 +1,36 @@
+{
+  "name": "things-visualizer",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
+    "gold-email-input": "PolymerElements/gold-email-input#^1.0.7",
+    "paper-fab-transitions": "^0.1.0",
+    "things-zpl": "^0.1.19",
+    "paper-fullscreen-dialog": "^1.0.2",
+    "page": "visionmedia/page.js#~1.6.4",
+    "things-elements": "ThingsElements/things-elements",
+    "things-designer-elements": "ThingsElements/things-designer-elements",
+    "things-monitor": "ThingsElements/things-monitor",
+    "things-gmap": "ThingsElements/things-gmap",
+    "things-scene-gauge": "ThingsElements/things-scene-gauge",
+    "things-scene-progressbar": "ThingsElements/things-scene-progressbar",
+    "things-scene-clock": "ThingsElements/things-scene-clock",
+    "things-scene-indoor-map": "ThingsElements/things-scene-indoor-map",
+    "things-scene-compass": "ThingsElements/things-scene-compass",
+    "things-scene-half-roundrect": "ThingsElements/things-scene-half-roundrect",
+    "things-scene-gmap": "ThingsElements/things-scene-gmap",
+    "things-scene-viewer": "ThingsElements/things-scene-viewer",
+    "things-scene-barcode": "ThingsElements/things-scene-barcode",
+    "stomp-websocket": "^2.3.4",
+    "sockjs": "^0.3.4",
+    "i18n-msg": "^1.0.4"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.0.0"
+  },
+  "ignore": []
+}

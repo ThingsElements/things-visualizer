@@ -1,0 +1,110 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="things-visualizer-new">
+  <template>
+
+    <style>
+    </style>
+
+    <paper-input label="name"
+                 value="{{name::input}}"
+                 auto-validate
+                 pattern="[a-zA-Z-0-9]*"
+                 error-message="letters & dash only!">
+    </paper-input>
+
+    <paper-textarea label="description"
+                    value="{{description::input}}">
+    </paper-textarea>
+
+    <paper-dropdown-menu label="group"
+                         value="{{group}}"
+                         vertical-align="top"
+                         horizontal-align="left">
+
+      <paper-menu class="dropdown-content" selected="{{selectedGroup(group)}}">
+        <template is="dom-repeat" items="{{groups}}">
+          <paper-item>{{item.id}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+
+    <paper-input label="width" type="number" value="{{width::input}}"></paper-input>
+
+    <paper-input label="height" type="number" value="{{height::input}}"></paper-input>
+
+    <paper-input label="tags" type="string" value="{{tags::input}}"></paper-input>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-visualizer-new',
+
+        properties: {
+          group: {
+            type: String,
+            notify: true
+          },
+          groups: {
+            notify: true
+          },
+          object: {
+            type: Object,
+            value: {},
+            notify: true,
+            computed: 'computeObject(name,description,group,width,height,tags)'
+          }
+        },
+
+        listeners: {
+        },
+
+        created: function() {
+        },
+
+        computeObject(name, description, group, width, height, tags) {
+          var model = {
+            unit: 'cm',
+            left: 0,
+            top: 0,
+            width: width || 1200,
+            height: height || 800,
+            components: [],
+            links: [],
+            variables: []
+          }
+
+          return {
+            name: name,
+            description: description,
+            labelGroupId: group,
+            width: width || 1200,
+            height: height || 800,
+            tags: tags,
+            model: JSON.stringify(model),
+            thumbnail: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+          }
+        },
+
+        selectedGroup: function(group) {
+          if(!this.groups)
+            return
+
+          for(var i = 0;i < this.groups.length;i++) {
+            /* string과 number간의 type coertion이 필요하므로, == 로 비교 */
+            if(this.groups[i].id == group)
+              return i
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

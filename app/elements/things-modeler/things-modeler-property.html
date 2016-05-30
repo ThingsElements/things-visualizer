@@ -1,0 +1,289 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-right-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-right-animation.html">
+
+<link rel="import" href="./things-property-shape.html">
+<link rel="import" href="./things-property-style.html">
+<link rel="import" href="./things-property-effect.html">
+<link rel="import" href="./things-property-animation.html">
+<link rel="import" href="./things-property-variable.html">
+
+<dom-module id="things-modeler-property">
+  <template>
+    <style>
+      :host {
+        max-width:240px;
+        min-width:240px;
+        background-color:var(--paper-blue-grey-50);
+        border-left:1px solid var(--paper-blue-grey-100);
+
+        @apply(--layout-vertical);
+      }
+
+      paper-tabs{background-color:var(--paper-blue-grey-500);max-height:40px;}
+      paper-tabs::shadow #selectionBar.paper-tabs{background-color:var(--paper-cyan-600);}
+      paper-tabs iron-icon{color:#fff !important;}
+
+      iron-pages{
+        overflow:hidden;
+        overflow-y:auto;
+
+        @apply(--layout-flex);
+      }
+    </style>
+
+    <paper-tabs selected="{{current}}" noink>
+      <paper-tab><iron-icon icon="icons:list"></iron-icon></paper-tab>
+      <paper-tab><iron-icon icon="icons:image:palette"></iron-icon></paper-tab>
+      <paper-tab><iron-icon icon="av:subtitles"></iron-icon></paper-tab>
+      <paper-tab><iron-icon icon="av:slow-motion-video"></iron-icon></paper-tab>
+      <paper-tab><iron-icon icon="icons:settings-brightness"></iron-icon></paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{current}}">
+      <things-property-shape model="{{model}}"
+                             bounds="{{bounds}}">
+      </things-property-shape>
+
+      <things-property-style model="{{model}}">
+      </things-property-style>
+
+      <things-property-effect model="{{model}}">
+      </things-property-effect>
+
+      <things-property-animation model="{{model}}">
+      </things-property-animation>
+
+      <things-property-variable scene="{{scene}}">
+      </things-property-variable>
+    </iron-pages>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-modeler-property',
+
+        behaviors: [
+          Polymer.NeonAnimationRunnerBehavior
+        ],
+
+        properties: {
+          scene: {
+            type: Object
+          },
+
+          selected: {
+            type: Array,
+            observer: '_onSelectedChanged'
+          },
+
+          propertyTarget: {
+            type: Object,
+            observer: '_onPropertyTargetChanged'
+          },
+
+          collapse: {
+            type: Boolean,
+            value: false,
+            observer: '_onCollapseChanged'
+          },
+
+          animationConfig: {
+            value: function() {
+              return {
+                'entry': {
+                  name: 'slide-from-right-animation',
+                  node: this
+                },
+                'exit': {
+                  name: 'slide-right-animation',
+                  node: this
+                }
+              }
+            }
+          }
+        },
+
+        listeners: {
+          'neon-animation-finish': '_onNeonAnimationFinish'
+        },
+
+        observers: [
+          '_onSceneChanged(scene)',
+          '_onModelChanged(model.*)',
+          '_onBoundsChanged(bounds.*)'
+        ],
+
+        ready: function() {
+          this.current = 0
+        },
+
+        _show: function() {
+          this.opened = true;
+          this.style.display = 'flex'
+
+          this.playAnimation('entry')
+        },
+
+        _hide: function() {
+          this.opened = false;
+
+          this.playAnimation('exit')
+        },
+
+        _onNeonAnimationFinish: function() {
+          if (!this.opened) {
+            this.style.display = 'none'
+          }
+
+          if(this.scenemap)
+            this.scenemap.resize()
+          else if(this.scene)
+            this.scene.resize()
+        },
+
+        _onCollapseChanged: function(after) {
+          if(after)
+            this._hide()
+          else
+            this._show()
+        },
+
+        _defaultPropertyTarget: function() {
+          if(!this.scene) {
+            this.propertyTarget = null
+            this.model = {}
+            this.bounds = {}
+
+          } else {
+            this.propertyTarget = this.scene.root
+            this.model = JSON.parse(JSON.stringify(this.propertyTarget.hierarchy))
+            this.bounds = Object.assign({}, this.propertyTarget.bounds)
+          }
+        },
+
+        _onSceneChanged: function() {
+          this._defaultPropertyTarget()
+        },
+
+        _onModelChanged: function(change) {
+
+          /* 사용자가 선택한 컴포넌트가 바뀐 경우도 호출되므로, 이 경우는 제외한다. */
+          if(change.path === 'model' || this.changedByScene)
+            return
+
+          var self = this
+
+          if(this.propertyTarget) {
+            this.scene.undoableChange(function() {
+              self.propertyTarget.set(change.path.substr(6), change.value)
+            })
+            return
+          }
+
+          /* 여러 컴포넌트의 경우에 적용 */
+          this.scene.undoableChange(function() {
+            self.selected.forEach(function(component) {
+              component.set(change.path.substr(6), change.value)
+            })
+          })
+        },
+
+        _onBoundsChanged: function(change) {
+          /* 사용자가 선택한 컴포넌트가 바뀐 경우도 호출되므로, 이 경우는 제외한다. */
+          if(change.path === 'bounds' || this.changedByScene)
+            return
+
+          var self = this
+
+          if(this.propertyTarget) {
+            this.scene.undoableChange(function() {
+              self.propertyTarget.bounds = self.bounds
+            })
+
+            this.changedByScene = true
+            this.bounds = Object.assign({}, this.propertyTarget.bounds)
+            this.changedByScene = false
+
+            return
+          }
+
+          /* 여러 컴포넌트의 경우에 적용 */
+          this.changedByScene = true
+
+          var bounds = {}
+          bounds[change.path.substr(7)] = change.value
+
+          this.scene.undoableChange(function() {
+            self.selected.forEach(function(component) {
+              component.bounds = Object.assign({}, component.bounds, bounds)
+            })
+          })
+
+          this.changedByScene = false
+        },
+
+        _onModelChangedB: function(after, before) {
+
+          this.changedByScene = true
+
+          for(var property in after) {
+            if(property)
+              this.set('model.' + property, after[property])
+          }
+
+          this.bounds = Object.assign({}, this.propertyTarget.bounds)
+
+          this.changedByScene = false
+        },
+
+        _onSelectedChanged: function(after, before) {
+
+          this.changedByScene = true
+
+          if(after.length == 1) {
+
+            this.propertyTarget = after[0]
+            this.model = JSON.parse(JSON.stringify(this.propertyTarget.hierarchy))
+            this.bounds = Object.assign({}, this.propertyTarget.bounds)
+
+          } else if(after.length == 0) { // 선택이 안된 경우
+
+            this._defaultPropertyTarget()
+          } else { // 다중 선택된 경우
+
+            this.propertyTarget = null
+            this.model = {
+              alpha: 1
+            }
+            this.bounds = {}
+          }
+
+          this.changedByScene = false
+        },
+
+        _onPropertyTargetChanged: function(after, before) {
+          if(before) {
+            before.off('change', this._onModelChangedB, this)
+          }
+          if(after) {
+            after.on('change', this._onModelChangedB, this)
+          }
+        }
+
+      })
+
+    })();
+
+  </script>
+</dom-module>

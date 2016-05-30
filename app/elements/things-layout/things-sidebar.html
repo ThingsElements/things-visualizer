@@ -1,0 +1,236 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../elements/things-visualizer/things-group-new.html">
+
+<dom-module id="things-sidebar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color:var(--paper-blue-grey-800);
+      }
+      :host paper-scroll-header-panel{height:100%;}
+      :host paper-badge{top:8px !important;left:210px !important;}
+      :host paper-badge::shadow div.paper-badge{background-color:rgba(0,0,0,.15) !important;width:30px !important;border-radius:5px;padding:0px 1px;}
+      :host paper-button{
+        display:block;border-bottom:1px solid rgba(0,0,0,.1);margin:0;
+        color:var(--paper-blue-grey-300);font-size:14px;font-weight:400;text-align:left
+      }
+      :host paper-button iron-icon{width:18px;height:18px;margin-top:-2px;margin-right:4px}
+      :host iron-collapse{background-color:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.05);border-width:1px 0;border-left:3px solid var(--paper-cyan-800);}
+      :host iron-collapse paper-item{
+        padding:0 10px;display:block !important;min-height:30px !important;border-bottom:1px solid rgba(0,0,0,.1);
+        font-size:12px !important;color:var(--paper-blue-grey-100);line-height:2.5 !important
+      }
+      :host iron-collapse paper-item:hover, [selected]{background-color:teal;}
+      :host iron-collapse paper-item iron-icon{width:13px;height:13px;margin-right:4px;}
+      :host .group-btnline paper-icon-button{color:var(--paper-blue-grey-400);}
+      :host .brand{background:var(--paper-blue-grey-700);color:var(--paper-blue-grey-100);padding:7px 10px 5px 10px;text-transform:capitalize;}
+      :host .brand iron-icon{background:var(--paper-teal-700);}
+      paper-listbox{background-color:transparent;}
+    </style>
+
+    <things-ajax id="refresh"
+                 resource-url="labels/groups/all"
+                 last-response="{{groups}}"
+                 response-root="items">
+    </things-ajax>
+
+    <things-ajax id="play-group-relation"
+                 resource-url="labels/:id/groups/:groupId"
+                 method="PUT"
+                 last-response="{{groups}}"
+                 response-root="">
+    </things-ajax>
+
+    <things-group-new id="new-group"></things-group-new>
+
+    <div class="brand">things visualizer</div>
+
+    <!-- Drawer Scroll Header Panel -->
+    <paper-scroll-header-panel>
+      <paper-button aria-controls="recent-list-collapse" on-tap="toggle">
+        <iron-icon icon="editor:insert-drive-file"></iron-icon><!--things-i18n-msg msgid="recent-list" auto>recent list</things-i18n-msg-->recent list
+      </paper-button>
+
+      <iron-collapse id="recent-list-collapse" opened="true">
+        <paper-listbox id="recent-list" class="content">
+          <paper-item data-group="recent-update">
+            <iron-icon icon="icons:create">
+            </iron-icon><things-i18n-msg msgid="recent-updated-order" auto>recent updated</things-i18n-msg>
+          </paper-item>
+          <paper-item data-group="recent-print">
+            <iron-icon icon="icons:print">
+            </iron-icon><things-i18n-msg msgid="recent-printed-order" auto>recent printed</things-i18n-msg>
+          </paper-item>
+          <paper-item data-group="recent-create">
+            <iron-icon icon="icons:add-circle-outline">
+            </iron-icon><things-i18n-msg msgid="recent-created-order" auto>recent created</things-i18n-msg>
+          </paper-item>
+          <paper-item data-group="recent-released">
+            <iron-icon icon="icons:av:new-releases">
+            </iron-icon><things-i18n-msg msgid="recent-released-order" auto>recent released</things-i18n-msg>
+          </paper-item>
+        </paper-listbox>
+      </iron-collapse>
+
+      <paper-button aria-controls="group-list-collapse" on-tap="toggle">
+        <iron-icon icon="icons:folder-open"></iron-icon><!--things-i18n-msg msgid="group-list" auto>group list</things-i18n-msg-->group list
+      </paper-button>
+
+      <iron-collapse id="group-list-collapse">
+        <paper-listbox id="group-list" class="content" attr-for-selected="data-group">
+          <template is="dom-repeat" items="{{groups}}" filter="isLabelGroup">
+            <paper-item data-group$="{{item.id}}">
+              <iron-icon icon="icons:folder-open">
+              </iron-icon>{{item.name}}
+              <paper-badge label="{{item.labelCount}}"></paper-badge>
+            </paper-item>
+          </template>
+        </paper-listbox>
+      </iron-collapse>
+
+      <paper-button id="play-group-list-collapse-button" aria-controls="play-group-list-collapse" on-tap="toggle">
+        <iron-icon icon="icons:folder-open"></iron-icon><!--things-i18n-msg msgid="play-group-list">play group list</things-i18n-msg-->play group list
+      </paper-button>
+
+      <iron-collapse id="play-group-list-collapse">
+        <paper-listbox id="play-group-list" class="content" attr-for-selected="data-group">
+          <template is="dom-repeat" items="{{groups}}" filter="isPlayGroup">
+            <paper-item data-group$="{{item.id}}" data-group-type="player">
+              <iron-icon icon="icons:folder-open">
+              </iron-icon>{{item.name}}
+              <paper-badge label="{{item.labelCount}}"></paper-badge>
+            </paper-item>
+          </template>
+        </paper-listbox>
+      </iron-collapse>
+    </paper-scroll-header-panel>
+
+    <div class="group-btnline">
+      <paper-icon-button icon="icons:refresh" id="refresh-button"></paper-icon-button>
+      <paper-icon-button icon="icons:create-new-folder" id="add-button" class="pull-right"></paper-icon-button>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-sidebar',
+
+        properties: {
+          groups: {
+            type: Array,
+            notify: true
+          },
+          group: {
+            type: String,
+            notify: true
+          },
+          groupType: {
+            notify: true
+          }
+        },
+
+        observers: [
+          'onChangeGroup(group)'
+        ],
+
+        listeners: {
+          'group-list.tap': 'onTapGroup',
+          'play-group-list.tap': 'onTapGroup',
+          'recent-list.tap': 'onTapGroup',
+          'refresh-button.tap' : 'refreshGroups',
+          'add-button.tap' : 'onTapAddGroup',
+          'new-group.saveCompleted' : 'afterGroupAdded',
+          'play-group-list-collapse.dragover': 'onAllowDropToPlayGroup',
+          'play-group-list-collapse-button.dragover': 'onAllowDropToPlayGroup',
+          'play-group-list-collapse.drop': 'onDropToPlayGroup',
+          'play-group-relation.things-ajax-response' : 'refreshGroups'
+        },
+
+        onAllowDropToPlayGroup: function(e) {
+          e.preventDefault()
+
+          if(!this.$['play-group-list-collapse'].opened)
+            this.$['play-group-list-collapse'].show()
+        },
+
+        onDropToPlayGroup: function(e) {
+          e.preventDefault()
+
+          var data = e.dataTransfer.getData('label')
+          var groupId = e.target.getAttribute('data-group')
+          var playGroupRelAjax = this.$['play-group-relation']
+
+          playGroupRelAjax.resourceUrl = `labels/${data}/groups/${groupId}`
+          playGroupRelAjax.generateRequest()
+        },
+
+        onChangeGroup: function(group) {
+
+          var old = this.$$('[selected]')
+          if(old)
+            old.removeAttribute('selected')
+
+          if(group) {
+            var element = this.$$(`[data-group='${group}']`)
+            if(element)
+              element.setAttribute('selected', true)
+          }
+        },
+
+        onTapGroup: function(e) {
+
+          var button = e.target;
+
+          while (!button.hasAttribute('data-group') && button !== document.body)
+            button = button.parentElement;
+
+          var group = button.getAttribute('data-group')
+          this.groupType = button.getAttribute('data-group-type')
+
+          if(typeof(group) !== 'undefined') {
+            /* 같은 그룹이 선택되어도 강제로 변화를 일으켜주기 위한 꼼수 */
+            this.group = null
+            this.group = group
+          }
+          if(app.route === 'player' && this.groupType === 'player')
+            page('/player/' + this.group)
+          else
+            page('/list/' + this.group)
+        },
+
+        refreshGroups: function(e) {
+          this.$.refresh.generateRequest();
+        },
+
+        toggle: function(e) {
+          this.$[e.target.getAttribute('aria-controls')].toggle();
+        },
+
+        onTapAddGroup: function(e) {
+          this.$['new-group'].show();
+        },
+
+        afterGroupAdded: function(e) {
+          this.refreshGroups();
+        },
+
+        isLabelGroup: function(group) {
+          return group.category && group.category == 'LABEL';
+        },
+
+        isPlayGroup: function(group) {
+          return group.category && group.category == 'PLAY';
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

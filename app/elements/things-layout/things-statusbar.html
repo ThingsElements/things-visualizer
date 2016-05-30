@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="things-statusbar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color:var(--paper-blue-grey-400);min-height:28px;
+        font-size:12px;color:var(--paper-blue-grey-100);
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      div{
+        text-indent:12px;line-height:2.4;
+        @apply(--layout-flex);
+      }
+    </style>
+
+    <div>{{ message }}</div>
+
+    <things-context-buttons route="{{route}}"
+                            group-id="{{groupId}}"
+                            label-id="{{labelId}}">
+    </things-context-buttons>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-statusbar',
+
+        properties: {
+          route: {
+            notify: true
+          },
+          labelId: {
+            notify: true
+          },
+          groupId: {
+            notify: true
+          },
+          message: {
+            type: String,
+            value: 'Welcome !',
+            notify: true
+          }
+        },
+
+        listeners: {
+        }
+      });
+    })();
+  </script>
+</dom-module>

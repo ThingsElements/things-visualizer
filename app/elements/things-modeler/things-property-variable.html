@@ -1,0 +1,364 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+
+<link rel="import" href="../../bower_components/things-designer-elements/things-editor-value.html">
+
+<dom-module id="things-property-variable">
+  <template>
+    <style>
+      :host {
+        display: block;
+        max-width:240px;
+        min-width:240px;
+        background-color:var(--paper-blue-grey-50);
+      }
+
+      fieldset ul{padding:3px 3px 0 3px;}
+      fieldset li{
+        background-color:#fff;
+        border-radius:3px;
+        margin:3px 3px 0 0;
+        float:left;
+        cursor:pointer;
+        padding:2px 2px 0 5px;
+        color:#333;
+        font-size:13px;
+      }
+      fieldset li[active],fieldset li[focused]{
+        background-color:var(--paper-teal-300);
+        color:#fff;
+      }
+      fieldset legend a{
+        background-color:var(--paper-green-500);
+        border-radius:3px;
+        position:absolute;
+        margin-top:-12px;
+        right:5px;
+        padding:2px 5px;
+        color:#fff;
+        font-size:10px;
+        text-decoration:none;
+      }
+      fieldset li a{
+        background-color:#999;
+        border-radius:4px;
+        display:inline-block;
+        position:relative;
+        top:-2px;
+        left:-1px;
+        width:15px;height:14px;
+        font-family:verdana;
+        color:#fff;
+        font-size:11px;
+        text-decoration:none;
+        text-align:center;
+        line-height:1;
+      }
+      paper-tabs{
+        width:229px;height:25px;
+        margin:5px 0 0 5px;
+        border:1px solid rgba(0,0,0,.2);
+        border-width:1px 1px 0 1px;
+      }
+      paper-tabs::shadow #selectionBar.paper-tabs{background-color:transparent;}
+      paper-tab{
+        background-color:rgba(0,0,0,.2);
+        border:1px solid rgba(0,0,0,.07);
+        border-width:0 1px 0 0;
+        padding:0 5px;
+        color:#fff;
+        font-size:13px;
+      }
+      paper-tab[disabled]{background-color:rgba(0,0,0,.1);}
+      paper-tab:last-child{border-width:0;}
+      paper-tab.iron-selected{
+        background-color:rgba(255,255,255,.5);
+        color:#585858;
+      }
+      [has-set]:before{
+        content:"";
+        position:relative;
+        left:3px;
+        width:5px;height:5px;
+        display:inline-block;
+        border-radius:50%;
+        background-color:#4caf50;
+      }
+
+    </style>
+
+    <fieldset>
+      <legend>variable list <a href="#" onclick="return false" on-tap="onTapAdd">+ Add</a></legend>
+      <ul id="variable-list">
+        <template id="variable-list-template" is="dom-repeat" items="[[variables]]">
+          <li data-variable$="[[item.name]]">[[item.name]]
+            <a href="#" onclick="return false" on-tap="onTapDelete">x</a>
+          </li>
+        </template>
+      </ul>
+    </fieldset>
+
+    <template id="variable-template" is="dom-if" if="[[variable]]">
+
+      <fieldset>
+        <legend>variable</legend>
+        <label>key</label>
+        <input data-variable-key type="text" value="{{variable.key::change}}"/>
+        <label>name</label>
+        <input type="text" value="{{variable.name::change}}"/>
+        <label>type</label>
+        <select value="{{variable.type::change}}">
+          <option>string</option>
+          <option>number</option>
+          <option>boolean</option>
+        </select>
+        <label>value</label>
+        <input type="text" value="{{variable.value::change}}"/>
+
+      </fieldset>
+
+      <fieldset>
+        <legend>mapping</legend>
+
+        <paper-tabs selected="{{currentMappingIndex}}">
+          <paper-tab data-mapping="1">1</paper-tab>
+          <paper-tab data-mapping="2">2</paper-tab>
+          <paper-tab data-mapping="3">3</paper-tab>
+          <paper-tab data-mapping="4">4</paper-tab>
+          <paper-tab data-mapping="5">5</paper-tab>
+          <paper-tab data-mapping="6">6</paper-tab>
+          <paper-tab data-mapping="7">7</paper-tab>
+        </paper-tabs>
+
+        <things-editor-value mapping="{{mapping}}"
+                             type="[[variable.type]]">
+        </things-editor-value>
+
+      </fieldset>
+    </template>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-property-variable',
+
+        properties: {
+          scene: {
+            notify: true
+          }
+        },
+
+        observers: [
+          'onSceneChanged(scene)',
+          'onVariablesChanged(variables)',
+          'onVariableChanged(variable.*)',
+          'onMappingChanged(mapping.*)',
+          'onCurrentMappingIndexChanged(currentMappingIndex)'
+        ],
+
+        listeners: {
+          'variable-list.tap': 'onTapVariable'
+        },
+
+        onSceneChanged: function(scene) {
+          this.changedOnScene = true
+          this.variable = null
+          this.variables = scene.model.variables || []
+          this.changedOnScene = false
+        },
+
+        onVariablesChanged: function(after) {
+          /* 사용자가 선택한 컴포넌트가 바뀐 경우도 호출되므로, 이 경우는 제외한다. */
+          if(this.scene && !this.changedOnScene) {
+            /* 변화된 variables를 모델에 반영해준다. */
+            this.scene.root.set('variables', this.variables)
+          }
+
+          this._resetActiveVariable()
+        },
+
+        onVariableChanged: function(change) {
+          if(!this.variable) {
+            this.mapping = null
+            this.currentMappingIndex = null
+            return
+          }
+
+          if(change.path === 'variable') {
+
+            /* this.currentMappingIndex 의 강제 변경을 일으킴 */
+            this.set('currentMappingIndex', null)
+            this.set('currentMappingIndex', 0)
+          }
+
+          if(!this.variables.includes(this.variable)) {
+
+            if(this.variable.key && this.variable.name) {
+              /* 최소한 key와 name은 있어야 함. */
+              this.variables.push(this.variable)
+            } else {
+              this._resetActiveVariable()
+
+              return
+            }
+          } else {
+            if(!this.variable.key || !this.variable.name) {
+              var index = this.variables.indexOf(this.variable)
+              this.variables.splice(index, 1)
+            }
+          }
+          this.variables = this.variables.slice()
+        },
+
+        onMappingChanged: function(change) {
+
+          if(!this.variable)
+            return
+
+          var self = this
+
+          setTimeout(function() {
+            var last = -1
+
+            for(var i = 0;i < 7;i++) {
+              var mapping = self.variable.mappings[i]
+              var tab = self.querySelector(`paper-tab[data-mapping="${i + 1}"]`)
+
+              if(mapping) {
+                tab.active = true
+                tab.disabled = false
+                tab.setAttribute('has-set', true)
+
+                last = i
+              } else {
+                tab.active = false
+                tab.removeAttribute('has-set')
+                if(last < i - 1) {
+                  tab.disabled = true
+                } else {
+                  tab.disabled = false
+                }
+              }
+            }
+          }, 10)
+
+          if(change.path === 'mapping')
+            return
+
+          if(!this.variable.mappings)
+            this.variable.mappings = []
+
+          var mapping = this.mapping
+
+          if(mapping.target && mapping.property && mapping.rule) {
+            this.variable.mappings[this.currentMappingIndex] = mapping
+          } else {
+            this.variable.mappings[this.currentMappingIndex] = null
+          }
+
+          this.set('variable.mappings',
+            this.variable.mappings.filter(function(m) { return !!m })
+          )
+        },
+
+        onCurrentMappingIndexChanged: function(currentMappingIndex) {
+          if(!this.variable) {
+            this.currentMappingIndex = null
+            this.mapping = null
+            return
+          }
+
+          if(!this.variable.mappings)
+            this.variable.mappings = []
+
+          this.mapping = this.variable.mappings[currentMappingIndex] || {
+            property: 'text',
+            rule: 'value'
+          }
+
+          if(this.mapping.target) {
+            this.scene.select(this.mapping.target)
+          } else {
+            this.scene.select('')
+          }
+        },
+
+        onTapVariable: function(e) {
+          var variable = e.target;
+
+          while (!variable.hasAttribute('data-variable') && variable !== document.body)
+            variable = variable.parentElement;
+
+          var variable_name = variable.getAttribute('data-variable')
+
+          if(typeof(variable_name) !== 'undefined') {
+
+            for(var i = 0;i < this.variables.length;i++) {
+              if(this.variables[i].name === variable_name) {
+                this.variable = this.variables[i]
+                return
+              }
+            }
+          }
+        },
+
+        onTapAdd: function() {
+          this.variable = {}
+
+          this.querySelector('[data-variable-key]').focus()
+        },
+
+        onTapDelete: function(e) {
+          var variable = e.target;
+
+          while (!variable.hasAttribute('data-variable') && variable !== document.body)
+            variable = variable.parentElement;
+
+          var variable_name = variable.getAttribute('data-variable')
+
+          if(typeof(variable_name) !== 'undefined') {
+
+            for(var i = 0;i < this.variables.length;i++) {
+              if(this.variables[i].name === variable_name) {
+                this.variables.splice(i, 1)
+
+                if(this.variable.name == variable_name)
+                  this.variable = null
+
+                this.variables = this.variables.slice()
+
+                this._resetActiveVariable()
+                return
+              }
+            }
+          }
+        },
+
+        _resetActiveVariable: function() {
+          var self = this
+
+          /* 아래 줄은 변수의 이름 변경을 실시간으로 반영하기 위한 코드임 */
+          this.$['variable-list-template'].items = []
+          this.$['variable-list-template'].render()
+          this.$['variable-list-template'].items = this.variables
+          this.$['variable-list-template'].render()
+          /* 아래 줄은 변수의 이름 변경을 실시간으로 반영하기 위한 코드임 - 여기까지. */
+
+          var oldfocused = self.querySelector('li[focused]')
+          var newfocused = self.variable && self.variable.name ?
+            self.querySelector(`li[data-variable="${self.variable.name}"]`) : null
+
+          self.attributeFollows('focused', newfocused, oldfocused)
+        }
+      })
+
+    })();
+
+  </script>
+</dom-module>

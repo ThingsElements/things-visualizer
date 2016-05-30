@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<dom-module id="things-modeler-vtoolbar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color:var(--paper-blue-grey-50);
+
+        @apply(--layout-vertical);
+      }
+
+      iron-icon{
+        margin-bottom:1px;transform: scale(1.2);
+        color: var(--paper-blue-grey-500);
+        display:block;margin:auto;
+        @apply(--layout-center-center);
+      }
+      paper-button{
+        @apply(--layout-vertical)
+        margin:0;padding:5px 4px;
+        font-size:6px !important;transform: scale(0.8);color:var(--paper-blue-grey-400);text-transform:capitalize;
+      }
+
+      paper-button.pressed[active] {
+        background-color: var(--paper-blue-grey-200);
+        color: white;
+      }
+
+    </style>
+
+    <paper-button id="shift" toggles class="pressed" active="[[isShiftMode(mode)]]">
+      <iron-icon icon="icons:aspect-ratio" class="flex-center-justified"></iron-icon>
+      shift mode
+    </paper-button>
+
+    <template is="dom-repeat" items="{{components}}">
+      <paper-button data-pallet$="{{item.pallet}}">
+        <iron-icon icon="{{item.icon}}" class="flex-center-justified"></iron-icon>
+        {{item.pallet}}
+      </paper-button>
+    </template>
+
+    <things-modeler-pallet id="pallet"
+                           scene="{{scene}}"
+                           pallet="{{pallet}}"
+                           class="shadow">
+    </things-modeler-pallet>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-modeler-vtoolbar',
+
+        properties: {
+          scene: {
+            notify: true
+          },
+          components: {
+            type: Array,
+            notify: true,
+            value: [{
+              icon: 'receipt',
+              pallet: 'barcode'
+            }, {
+              icon: 'hardware:power-input',
+              pallet: 'line'
+            }, {
+              icon: 'check-box-outline-blank',
+              pallet: 'rect'
+            }, {
+              icon: 'icons:radio-button-unchecked',
+              pallet: 'ellipse'
+            }, {
+              icon: 'icons:change-history',
+              pallet: 'other shape'
+            }, {
+              icon: 'icons:polymer',
+              pallet: 'polygon'
+            }, {
+              icon: 'editor:text-fields',
+              pallet: 'text'
+            }, {
+              icon: 'image:crop-original',
+              pallet: 'image'
+            }, {
+              icon: 'editor:insert-chart',
+              pallet: 'gauge'
+            }, {
+              icon: 'editor:insert-chart',
+              pallet: 'chart'
+            }, {
+              icon: 'icons:drafts',
+              pallet: '3D'
+            }]
+          },
+          pallet: {
+            notify: true
+          },
+          mode: {
+            notify: true
+          }
+        },
+
+        listeners: {
+          'tap': 'onTapTools',
+          'shift.tap': 'onTapShift'
+        },
+
+        isShiftMode: function(mode) {
+          return mode === 2
+        },
+
+        ready: function() {
+
+          this.$['pallet'].fitInto = this.parentNode
+        },
+
+        onTapShift: function(e) {
+
+          this.mode = this.$.shift.active ? 2 : 1
+        },
+
+        onTapTools: function(e) {
+
+          var button = e.target;
+
+          while (!button.hasAttribute('data-pallet') && button !== document.body)
+            button = button.parentElement
+
+          this.pallet = button.getAttribute('data-pallet')
+
+          if(!this.pallet || button.tagName !== 'PAPER-BUTTON')
+            return
+
+          this.$.pallet.open()
+
+          this.async(function() {
+            var right = this.getBoundingClientRect().right
+            this.$.pallet.style['left'] = right + 'px'
+          }, 10, this);
+        }
+      });
+    })();
+  </script>
+</dom-module>

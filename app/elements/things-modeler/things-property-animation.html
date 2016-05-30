@@ -1,0 +1,77 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="things-property-animation">
+  <template>
+    <style>
+      :host {
+        display: block;
+        max-width:240px;
+        min-width:240px;
+        background-color:var(--paper-blue-grey-50);
+      }
+      :host paper-button{
+        background-color:var(--paper-blue-grey-500);
+        width:100%;
+        border-radius:0;
+        border-bottom:1px solid var(--paper-blue-grey-600);
+        padding:5px 0;margin:0;
+        color:#fff;font-size:11px;
+      }
+      :host paper-listbox paper-item{padding:4px 7px;min-height:30px;border-bottom:1px solid var(--paper-blue-grey-100);font-size:12px;}
+      :host iron-image{margin-right:7px;width:70px;height:40px;}
+      :host .content{background-color:rgba(255,255,255,.5);}
+      :host .color-palette{
+        display:inline-block;position:relative;top:5px;height:17px;
+        border:1px solid rgba(0,0,0,.2);background-color:teal;border-radius:2px;
+      }
+
+      :host paper-slider{
+        --paper-slider-active-color:var(--paper-cyan-600);
+        --paper-slider-knob-color:var(--paper-cyan-600);
+        margin-top:5px;padding:0;
+        height: 20px;
+      }
+      paper-slider::shadow #sliderBar #progressContainer{background-color:var(--paper-blue-grey-100);}
+      paper-slider::shadow #sliderBar{margin-top:8px;padding:7px 0;}
+      :host .vline{display:block;border-left:1px solid rgba(255,255,255,.07);border-right:1px solid rgba(0,0,0,.1);width:0px;height:18px;margin:0 4px;}
+      :host paper-slider::shadow #sliderKnobInner{width:10px;height:10px;margin-top:11px;}
+      :host paper-slider::shadow #sliderContainer{margin:5px !important;}
+      :host paper-slider::shadow paper-input{overflow:initial !important;}
+      :host paper-slider::shadow paper-input .underline{display:none;}
+      :host fieldset paper-slider{width:71% !important;}
+      :host fieldset paper-slider::shadow paper-input input{
+        border:1px solid #ccc;background-color:#fff;
+        font-size:12px !important;line-height:20px !important
+      }
+    </style>
+
+    <form class="content" method="post">
+      <fieldset>
+        <legend>animation</legend>
+      </fieldset>
+    </form>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-property-animation',
+
+        properties: {
+          model: {
+            notify: true
+          }
+        }
+
+      })
+
+    })();
+
+  </script>
+</dom-module>

@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-fullscreen-dialog/paper-fullscreen-dialog.html">
+
+<dom-module id="things-version">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    </style>
+
+    <things-ajax auto
+                 method="GET"
+                 resource-url="{{versionsUrl}}"
+                 last-response="{{labelHistories}}"
+                 response-root="items">
+    </things-ajax>
+
+    <template is="dom-repeat" items="[[labelHistories]]">
+      <things-item label="[[item]]"></things-item>
+    </template>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-version',
+
+        properties: {
+          labelId: {
+            notify: true
+          },
+          labelHistories: {
+            type: Array,
+            notify: true
+          },
+          versionsUrl: {
+            computed: 'computeVersionsUrl(labelId)'
+          }
+        },
+
+        computeVersionsUrl: function(labelId) {
+          return 'labels/versions/' + labelId + '.json';
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

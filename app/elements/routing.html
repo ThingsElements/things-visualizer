@@ -1,0 +1,128 @@
+<script src="../bower_components/page/page.js"></script>
+
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+
+    // We use Page.js for routing. This is a Micro
+    // client-side router inspired by the Express router
+    // More info: https://visionmedia.github.io/page.js/
+
+    // Removes end / from app.baseUrl which page.base requires for production
+    if (window.location.port === '') {  // if production
+      page.base(app.baseUrl.replace(/\/$/, ''))
+    }
+
+    // Middleware
+    function scrollToTop(ctx, next) {
+      app.scrollPageToTop()
+      next()
+    }
+
+    function closeDrawer(ctx, next) {
+      app.closeDrawer()
+      next()
+    }
+
+    function forceNarrowDrawer(ctx, next) {
+      app.$.drawer.forceNarrow = true
+      next()
+    }
+
+    function unforceNarrowDrawer(ctx, next) {
+      app.$.drawer.forceNarrow = false
+      next()
+    }
+
+    function load(ctx, next){
+      var id = ctx.params.id
+      $.getJSON('/user/' + id + '.json', function(user){
+        ctx.user = user
+        next()
+      })
+    }
+
+    // Routes
+    page('*', scrollToTop, unforceNarrowDrawer, closeDrawer, function(ctx, next) {
+      next()
+    })
+
+    page('/', function() {
+      page('/list/' + (app.group||'recent-update'))
+    })
+
+    page('/login', forceNarrowDrawer, function() {
+      app.route = 'login'
+    })
+
+    page('/logout', function() {
+      app.route = 'logout'
+    })
+
+    page(app.baseUrl, function() {
+      page('/')
+    })
+
+    page('/list/:groupId', function(ctx) {
+      app.route = 'list'
+      app.group = ctx.params.groupId
+    })
+
+    page('/player/:groupId', function(ctx) {
+      app.route = 'player'
+      app.group = ctx.params.groupId
+    })
+
+    page('/info/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'info'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/modeler/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'modeler'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/version/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'version'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/variable/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'variable'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/preview/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'preview'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/export/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'export'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/print/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'print'
+      app.labelId = ctx.params.labelId
+    })
+
+    page('/print-history/:labelId', forceNarrowDrawer, function(ctx) {
+      app.route = 'print-history'
+      app.labelId = ctx.params.labelId
+    })
+
+    // 404
+    page('*', function() {
+      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page'
+      app.$.toast.show()
+      page.redirect(app.baseUrl)
+    })
+
+    // add #! before urls
+    page({
+      hashbang: true
+    })
+
+  })
+</script>

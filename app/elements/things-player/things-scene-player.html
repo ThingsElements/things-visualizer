@@ -1,0 +1,92 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/things-scene-viewer/things-scene-viewer.html">
+<link rel="import" href="../../bower_components/things-scene-gmap/things-scene-gmap.html">
+
+<link rel="import" href="../../bower_components/things-global-behavior/things-global-behavior.html">
+
+<dom-module id="things-scene-player">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    things-scene-viewer{
+      display: block;
+      width: 100%; /* 전체화면보기를 위해서 필요함. */
+      height: 100%;
+    }
+
+    things-scene-gmap {
+      display: block;
+      width: 100%; /* 전체화면보기를 위해서 필요함. */
+      height: 100%;
+    }
+    </style>
+
+    <things-ajax  auto=true
+                  id="get-label"
+                  resource-url="labels/{{labelUrl}}"
+                  last-response="{{response}}"
+                  response-root="items">
+    </things-ajax>
+
+    <things-scene-viewer model="[[model]]"
+                         screen-size="[[globals.screen]]"
+                         values="[[messages]]"
+                         mode="0"
+                         fit="both">
+    </things-scene-viewer>
+
+<!--
+    <things-scene-gmap model="[[model]]"
+                               zoom="2"
+                               mode="2"
+                               values="[[message]]">
+    </things-scene-gmap>
+ -->
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-scene-player',
+
+        behaviors: [
+          Things.GlobalBehavior,
+        ],
+
+        properties: {
+          label: {
+            type: Object
+          },
+          labelUrl: {
+            notify: true,
+            computed: '_computeUrl(globals.baseUrl, label)'
+          },
+          model: {
+            type: Object,
+            computed: '_evalModel(response)'
+          },
+          message: {
+            type: Object,
+            notify: true
+          }
+        },
+
+        _computeUrl: function(baseUrl, label) {
+          if(label)
+            return [label.id, '.json'].join('')
+        },
+
+        _evalModel: function(response) {
+          return eval("(" + response.model + ")")
+        }
+      });
+    })();
+  </script>
+</dom-module>

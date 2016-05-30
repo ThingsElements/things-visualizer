@@ -1,0 +1,217 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/things-angle-input/things-angle-input.html">
+<link rel="import" href="../../bower_components/things-designer-elements/things-editor-buttons-radio.html">
+
+<dom-module id="things-property-shape">
+  <template>
+    <style>
+      :host {
+        display: block;
+        max-width:240px;
+        min-width:240px;
+        background-color:var(--paper-blue-grey-50);
+
+        --things-editor-buttons-radio-button: {
+          background:url(/images/icon-properties.png) 85% 2px no-repeat;
+        }
+      }
+
+      :host paper-listbox paper-item{padding:4px 7px;min-height:30px;border-bottom:1px solid var(--paper-blue-grey-100);font-size:12px;}
+      :host iron-image{margin-right:7px;width:70px;height:40px;}
+      :host .content{background-color:rgba(255,255,255,.5);}
+      :host .color-palette{
+        display:inline-block;position:relative;top:5px;height:17px;
+        border:1px solid rgba(0,0,0,.2);background-color:teal;border-radius:2px;
+      }
+
+      :host paper-slider{
+        --paper-slider-active-color:var(--paper-cyan-600);
+        --paper-slider-knob-color:var(--paper-cyan-600);
+        margin-top:5px;padding:0;
+        height: 20px;
+      }
+      paper-slider::shadow #sliderBar #progressContainer{background-color:var(--paper-blue-grey-100);}
+      paper-slider::shadow #sliderBar{margin-top:8px;padding:7px 0;}
+      :host .vline{display:block;border-left:1px solid rgba(255,255,255,.07);border-right:1px solid rgba(0,0,0,.1);width:0px;height:18px;margin:0 4px;}
+      :host paper-slider::shadow #sliderKnobInner{width:10px;height:10px;margin-top:11px;}
+      :host paper-slider::shadow #sliderContainer{margin:5px !important;}
+      :host paper-slider::shadow paper-input{overflow:initial !important;}
+      :host paper-slider::shadow paper-input .underline{display:none;}
+      :host fieldset paper-slider{width:71% !important;}
+      :host fieldset paper-slider::shadow paper-input input{
+        border:1px solid #ccc;background-color:#fff;
+        font-size:12px !important;line-height:20px !important
+      }
+
+      paper-button[data-value=left] {
+        background-position:50%  -395px
+      }
+      paper-button[data-value=center] {
+        background-position:50%  -495px
+      }
+      paper-button[data-value=right] {
+        background-position:50%  -595px
+      }
+      paper-button[data-value=justify] {
+        background-position:50%  -695px
+      }
+      paper-button[data-value=top] {
+        background-position:50%  -795px
+      }
+      paper-button[data-value=middle] {
+        background-position:50%  -895px
+      }
+      paper-button[data-value=bottom] {
+        background-position:50%  -995px
+      }
+      .box-padding{
+        width:71%;
+        margin-top:5px;
+      }
+      .box-padding td{
+        background:url(/images/icon-properties-padding.png) 50% 0 no-repeat;
+      }
+      .box-padding tr:nth-child(1),.box-padding tr:nth-child(3){height:20px;}
+      .box-padding tr td:nth-child(1),.box-padding tr td:nth-child(3){width:18px;}
+      .box-padding .slide1{background-position:  0       0;}
+      .box-padding .slide2{background-position: 50%  -40px;background-color:rgba(69,46,41,.2);}
+      .box-padding .slide3{background-position:100% -440px;}
+      .box-padding .slide4{background-position:  0  -360px;background-color:rgba(69,46,41,.2);}
+      .box-padding .slide5{background:none;text-align:center}
+      .box-padding .slide6{background-position:100% -160px;background-color:rgba(69,46,41,.2);}
+      .box-padding .slide7{background-position:  0    100%;}
+      .box-padding .slide8{background-position: 50% -320px;background-color:rgba(69,46,41,.2);}
+      .box-padding .slide9{background-position:  0     0px;}
+      .box-padding input{
+        background-color:transparent;
+        width:35px;
+        margin:1px;
+        clear:both;float:initial;
+        border:1px solid #fff;
+        border-width:0 0 1px 0;
+        text-align:right;
+      }
+      .slide5 input:nth-child(1),.slide5 input:nth-child(4){display:block;margin:auto;margin-bottom:3px;}
+      .slide5 input:nth-child(2){float:left;}
+      .slide5 input:nth-child(3){float:right;margin-top:-20px;}
+    </style>
+
+    <fieldset>
+      <label>ID</label>
+      <input required value="{{model.id::change}}">
+      <label>Class</label>
+      <input required value="{{model.class::change}}">
+      <label>Text</label>
+      <input required value="{{model.text::change}}">
+      <div class="merge-column">
+        <input type="checkbox" checked="{{model.hidden::change}}" required>Item Hidden
+      </div>
+      <div class="merge-column">
+        <input type="checkbox" checked="{{model.locked::change}}" required>Locked
+      </div>
+    </fieldset>
+
+    <fieldset class="column-double">
+      <legend>size</legend>
+      <label>X</label>
+      <input required type="number" value-as-number="{{bounds.left::change}}">
+      <label>Y</label>
+      <input required type="number" value-as-number="{{bounds.top::change}}">
+      <label>W</label>
+      <input required type="number" value-as-number="{{bounds.width::change}}">
+      <label>H</label>
+      <input required type="number" value-as-number="{{bounds.height::change}}">
+      <div class="merge-column">
+        <input type="checkbox" name="food" value="pizza" required>Lock aspect ratio
+      </div>
+      <label>Rotate</label>
+      <input is="things-angle-input" radian="{{model.rotation}}">
+<!--
+      <div class="merge-column">
+        <label>Center</label>
+        <input required value="{{model.center.x::change}}">
+        <input required value="{{model.center.y::change}}">
+      </div>
+ -->
+    </fieldset>
+
+    <fieldset class="same-width">
+      <legend>text box</legend>
+
+      <label>horizontal align</label>
+      <things-editor-buttons-radio value="{{model.textAlign}}">
+        <paper-button data-value="left"></paper-button>
+        <paper-button data-value="center"></paper-button>
+        <paper-button data-value="right"></paper-button>
+        <paper-button data-value="justify"></paper-button>
+      </things-editor-buttons-radio>
+
+      <label>vertical align</label>
+      <things-editor-buttons-radio value="{{model.textBaseline}}">
+        <paper-button data-value="top"></paper-button>
+        <paper-button data-value="middle"></paper-button>
+        <paper-button data-value="bottom"></paper-button>
+      </things-editor-buttons-radio>
+
+      <label>text fit</label>
+      <select class="select-content" value="{{model.textType::change}}">
+        <option value="F">fit on box</option>
+        <option value="W">wrap text</option>
+        <option value="S">on font-size</option>
+      </select>
+
+    </fieldset>
+
+    <fieldset>
+      <label>padding</label>
+      <table class="box-padding">
+        <tr>
+          <td class="slide1"></td>
+          <td class="slide2"></td>
+          <td class="slide3"></td>
+        </tr>
+        <tr>
+          <td class="slide4"></td>
+          <td class="slide5">
+            <input type="number" placeholder="0" value-as-number="{{model.paddingTop::change}}"/>
+            <input type="number" placeholder="0" value-as-number="{{model.paddingLeft::change}}"/>
+            <input type="number" placeholder="0" value-as-number="{{model.paddingRight::change}}"/>
+            <input type="number" placeholder="0" value-as-number="{{model.paddingBottom::change}}"/>
+          </td>
+          <td class="slide6"></td>
+        </tr>
+        <tr>
+          <td class="slide7"></td>
+          <td class="slide8"></td>
+          <td class="slide9"></td>
+        </tr>
+      </table>
+    </fieldset>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-property-shape',
+
+        properties: {
+          model: {
+            notify: true
+          },
+          bounds: {
+            notify: true
+          }
+        }
+      })
+
+    })();
+
+  </script>
+</dom-module>

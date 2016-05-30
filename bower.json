@@ -24,7 +24,7 @@
     "things-scene-half-roundrect": "ThingsElements/things-scene-half-roundrect",
     "things-scene-gmap": "ThingsElements/things-scene-gmap",
     "things-scene-viewer": "ThingsElements/things-scene-viewer",
-    "things-scene-barcode": "ThingsElements/things-scene-barcode",
+    "things-scene-3d-viewer": "ThingsElements/things-scene-3d-viewer",
     "stomp-websocket": "^2.3.4",
     "sockjs": "^0.3.4",
     "i18n-msg": "^1.0.4",

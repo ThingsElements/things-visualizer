@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-
+<link rel="import" href="../../bower_components/firebase-element/firebase-collection.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-document.html">
+bower install --save GoogleWebComponents/
 <link rel="import" href="../../bower_components/things-scene-viewer/things-scene-viewer.html">
 <link rel="import" href="../../bower_components/things-scene-viewer/things-scene-layer.html">
 <link rel="import" href="../../bower_components/things-scene-viewer/things-scene-values.html">
@@ -86,6 +88,12 @@
     <things-websocket id="websocket" url="ws://192.168.35.227:9010/print/label">
     </things-websocket>
 
+    <firebase-document
+      location="https://glowing-fire-6105.firebaseio.com"
+
+      data="{{status}}">
+    </firebase-document>
+
   </template>
 
   <script src="../../bower_components/things-zpl/things-zpl.js"></script>
@@ -107,6 +115,9 @@
           route: {
             notify:true,
             observer: 'onRouteChanged'
+          },
+          status: {
+            observer: 'onStatusChanged'
           }
         },
 
@@ -130,6 +141,10 @@
 
         detached: function() {
           this.$.websocket.fire('close')
+        },
+
+        onStatusChanged: function(data) {
+          console.log('Status Changed', data)
         },
 
         _getModelSuccess: function(event) {

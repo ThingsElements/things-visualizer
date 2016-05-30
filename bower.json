@@ -27,7 +27,8 @@
     "things-scene-barcode": "ThingsElements/things-scene-barcode",
     "stomp-websocket": "^2.3.4",
     "sockjs": "^0.3.4",
-    "i18n-msg": "^1.0.4"
+    "i18n-msg": "^1.0.4",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

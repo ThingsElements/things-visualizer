@@ -20,17 +20,56 @@
         @apply(--layout-flex)
       }
 
-      paper-fab {
+      paper-fab-speed-dial {
+        background-color:transparent;
+        z-index:10000;
+        position:absolute;
+        right:15px;
+        bottom:15px;
+      }
+      .fab-text{
+        position:absolute;
+        margin-top:-35px;margin-left:-55px;
+        padding:2px 3px;
+        width:45px;
+        background-color:rgba(0,0,0,.5);
+        -moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;
+        color:#fff;
+        font-size:11px;
+        text-align:center;
+        -webkit-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+        -moz-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+        box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.2);
+      }
+      .fab-text:after{
+        content:"";
+        position: absolute;
+        left: 100%;
+        top: 5px;
+        width: 0;
+        height: 0;
+        border-top: 3px solid transparent;border-left: 4px solid rgba(0,0,0,.5);border-bottom: 3px solid transparent;
+      }
+
+/*      paper-fab {
         position: absolute;
         bottom: 42px;
         right: 16px;
       }
-    </style>
+*/    </style>
 
     <things-scene-3d-viewer model="[[model]]" data="[[data]]">
     </things-scene-3d-viewer>
 
-    <paper-fab noink id="print" icon="icons:print" title="print"></paper-fab>
+    <paper-fab-speed-dial id="fab" direction="top">
+      <paper-fab icon="add" class="dropdown-trigger"></paper-fab>
+      <div class="dropdown-content">
+        <paper-fab mini id="fullscreen" icon="icons:settings-overscan" title="full screen"></paper-fab>
+        <div class="fab-text">full screen</div>
+        <paper-fab mini id="stop" noink icon="av:stop" title="stop play"></paper-fab>
+        <div class="fab-text">stop</div>
+      </div>
+    </paper-fab-speed-dial>
 
     <firebase-document
       location="https://glowing-fire-6105.firebaseio.com"
@@ -69,7 +108,8 @@
         ],
 
         listeners: {
-          'print.tap': 'onTapPrint'
+          'stop.tap': 'onTapStop',
+          'fullscreen.tap': 'onTapFullscreen'
         },
 
         ready: function() {
@@ -82,9 +122,21 @@
         detached: function() {
         },
 
-        onDataChanged: function(data) {
-          this.data = data
+        onTapStop: function() {
+
+          // this._stopPlay()
+          // page(`/list/${this.group}`)
         },
+
+        onTapFullscreen: function() {
+
+          this._fullscreen()
+          this.currentPlayer.focus()
+        },
+
+        // onDataChanged: function(data) {
+        //   this.data = data
+        // },
 
         _getModelSuccess: function(event) {
           var result = JSON.parse(event.detail.response);
@@ -103,6 +155,91 @@
           /* route가 변경되었을 때만, 작동한다. 편법이지만. */
           if(this.scene && route === this.getAttribute('data-route'))
             this.model = this.scene.model
+        },
+
+        _startPlay: function() {
+          /* 플레이가 시작되는 조건
+           * - labelsCopy가 채워질 때
+           */
+          // if(this.interval)
+          //   clearInterval(this.interval)
+
+          // this.currentPlayer = this.$$(':not([style*="display: none"])[focus]')
+
+          // var self = this
+          // this.interval = setInterval(function() {
+          //   if(self.interval)
+          //     self.currentPlayer.next()
+          // }, this.playtime * 1000)
+
+          // this.$.subscriber.start()
+
+          this.started = true
+        },
+
+        _stopPlay: function() {
+          /* 플레이가 종료되는 조건
+           * - 라우트가 바뀐다
+           * - 종료 버튼이 눌린다
+           * - labesCopy가 비워지게될 때
+           */
+          // this.$.subscriber.stop()
+
+          // if(this.interval)
+          //   clearInterval(this.interval)
+
+          // this.labelsCopy = []
+          this.started = false
+        },
+
+        _showHideFab: function(show) {
+          this.$.fab.hidden = !show
+        },
+
+        _fullscreen: function(element) {
+
+          var self = this
+
+          if(this.requestFullScreen) {
+            // W3C
+            var listener = document.addEventListener("fullscreenchange", function(){
+              self._showHideFab(!document.isFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("fullscreenchange", listener)
+            });
+
+            this.requestFullScreen();
+
+          } else if(this.webkitRequestFullScreen) {
+            // Webkit
+            var listener = document.addEventListener("webkitfullscreenchange", function(){
+              self._showHideFab(!document.webkitIsFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("webkitfullscreenchange", listener)
+            });
+
+            this.webkitRequestFullScreen();
+
+          } else if(this.mozRequestFullScreen) {
+            // Firefox
+            var listener = document.addEventListener("mozfullscreenchange", function(){
+              self._showHideFab(!document.mozIsFullScreen)
+              if(!document.isFullScreen)
+                document.removeEventListener("mozfullscreenchange", listener)
+            });
+
+            this.mozRequestFullScreen();
+
+          } else if(videoContainer.msRequestFullscreen) {
+            // Explorer
+            var listener = document.addEventListener("MSFullscreenChange", function(){
+              self._showHideFab(!document.msFullscreenElement)
+              if(!document.isFullScreen)
+                document.removeEventListener("MSFullscreenChange", listener)
+            });
+
+            this.msRequestFullscreen();
+          }
         }
       });
     })();

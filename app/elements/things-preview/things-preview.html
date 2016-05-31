@@ -58,7 +58,7 @@
       }
 */    </style>
 
-    <things-scene-3d-viewer model="[[model]]" data="[[data]]">
+    <things-scene-3d-viewer id="viewer" model="[[model]]" data="[[data]]">
     </things-scene-3d-viewer>
 
     <paper-fab-speed-dial id="fab" direction="top">
@@ -99,6 +99,9 @@
           },
           data: {
             observer: 'onDataChanged'
+          },
+          label: {
+            type: Object
           }
         },
 
@@ -124,8 +127,8 @@
 
         onTapStop: function() {
 
-          // this._stopPlay()
-          // page(`/list/${this.group}`)
+          this._stopPlay()
+          page(`/modeler/${app.labelId}`)
         },
 
         onTapFullscreen: function() {
@@ -153,8 +156,11 @@
         onRouteChanged: function(route) {
 
           /* route가 변경되었을 때만, 작동한다. 편법이지만. */
-          if(this.scene && route === this.getAttribute('data-route'))
+          if(this.scene && route === this.getAttribute('data-route')) {
             this.model = this.scene.model
+            this._startPlay()
+          }
+
         },
 
         _startPlay: function() {
@@ -173,6 +179,10 @@
           // }, this.playtime * 1000)
 
           // this.$.subscriber.start()
+          if(this.data) {
+            this.$.viewer.data = {}
+            this.$.viewer.data = this.data
+          }
 
           this.started = true
         },

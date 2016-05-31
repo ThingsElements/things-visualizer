@@ -518,20 +518,18 @@
       </fieldset>
     </template>
 
-    <template is="dom-if" if="[[_isTypeofModel(model, 'rack')]]">
-      <fieldset class="same-width">
-        <legend>Rack style</legend>
+    <fieldset class="same-width">
+      <legend>Rack style</legend>
 
-        <label>Depth</label>
-        <input type="number" value-as-number="{{model.depth::change}}"/>
+      <label>Depth</label>
+      <input type="number" value-as-number="{{model.depth::change}}"/>
 
-        <label>Shelves</label>
-        <input type="number" value-as-number="{{model.shelves::change}}"/>
+      <label>Shelves</label>
+      <input type="number" value-as-number="{{model.shelves::change}}"/>
 
-        <label>Location</label>
-        <input type="text" value="{{model.location::change}}"/>
-      </fieldset>
-    </template>
+      <label>Location</label>
+      <input type="text" value="{{model.location::change}}"/>
+    </fieldset>
 
   </template>
 

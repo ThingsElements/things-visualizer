@@ -159,6 +159,8 @@
           if(this.scene && route === this.getAttribute('data-route')) {
             this.model = this.scene.model
             this._startPlay()
+          } else {
+            this._stopPlay()
           }
 
         },
@@ -184,6 +186,8 @@
             this.$.viewer.data = this.data
           }
 
+          this.$.viewer.startAnimation()
+
           this.started = true
         },
 
@@ -199,6 +203,10 @@
           //   clearInterval(this.interval)
 
           // this.labelsCopy = []
+
+          if(this.started)
+            this.$.viewer.stopAnimation()
+
           this.started = false
         },
 
